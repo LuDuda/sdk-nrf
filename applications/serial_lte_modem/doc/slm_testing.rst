@@ -1341,9 +1341,9 @@ Complete the following steps to test the functionality provided by the :ref:`SLM
 FTP AT commands
 ***************
 
-Note that these commands are available only if :option:`CONFIG_SLM_FTPC` is defined.
-Before you test the FTP AT commands, check the setting of the :option:`CONFIG_FTP_CLIENT_KEEPALIVE_TIME` option.
-By default, the :ref:`lib_ftp_client` library keeps the connection to the FTP server alive for 60 seconds, but you can change the duration or turn KEEPALIVE off by setting :option:`CONFIG_FTP_CLIENT_KEEPALIVE_TIME` to 0.
+Note that these commands are available only if :kconfig:`CONFIG_SLM_FTPC` is defined.
+Before you test the FTP AT commands, check the setting of the :kconfig:`CONFIG_FTP_CLIENT_KEEPALIVE_TIME` option.
+By default, the :ref:`lib_ftp_client` library keeps the connection to the FTP server alive for 60 seconds, but you can change the duration or turn KEEPALIVE off by setting :kconfig:`CONFIG_FTP_CLIENT_KEEPALIVE_TIME` to 0.
 
 The FTP client behavior depends on the FTP server that is used for testing.
 Complete the following steps to test the functionality provided by the :ref:`SLM_AT_FTP` with two example servers:
@@ -1744,12 +1744,12 @@ Complete the following steps to test the functionality provided by the :ref:`SLM
 GPS AT commands
 ***************
 
-Note that these commands are available only if :option:`CONFIG_SLM_GPS` is defined.
+Note that these commands are available only if :kconfig:`CONFIG_SLM_GPS` is defined.
 Before you test the GPS AT commands, check the following configuration values:
 
-* :option:`CONFIG_SUPL_CLIENT_LIB` - must be enabled to use the :ref:`supl_client`
-* :option:`CONFIG_SLM_SUPL_SERVER` - use the default ("supl.google.com") or specify a different server
-* :option:`CONFIG_SLM_SUPL_PORT` - use the default (7276) or specify a different port
+* :kconfig:`CONFIG_SUPL_CLIENT_LIB` - must be enabled to use the :ref:`supl_client`
+* :kconfig:`CONFIG_SLM_SUPL_SERVER` - use the default ("supl.google.com") or specify a different server
+* :kconfig:`CONFIG_SLM_SUPL_PORT` - use the default (7276) or specify a different port
 
 Complete the following steps to test the functionality provided by the :ref:`SLM_AT_GPS`:
 
