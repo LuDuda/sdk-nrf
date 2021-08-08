@@ -76,6 +76,7 @@ Matter
 
   * :ref:`Weather station <matter_weather_station_sample>` sample.
   * :ref:`Template <matter_template_sample>` sample with a guide about :ref:`ug_matter_creating_accessory`.
+  * PA/LNA GPIO interface support for RF front-end modules (FEM) in Matter.
 
 Zigbee
 ------
