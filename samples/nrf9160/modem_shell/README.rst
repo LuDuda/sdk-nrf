@@ -346,7 +346,7 @@ The sample supports the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf9160dk_nrf9160ns
+   :rows: nrf9160dk_nrf9160_ns
 
 Configuration
 *************
@@ -419,7 +419,7 @@ PPP support
 To build the MoSh sample with PPP/dial up support for Windows, use the ``-DOVERLAY_CONFIG=overlay-ppp.conf`` option.
 For example:
 
-``west build -p -b nrf9160dk_nrf9160ns -d build -- -DOVERLAY_CONFIG=overlay-ppp.conf``
+``west build -p -b nrf9160dk_nrf9160_ns -d build -- -DOVERLAY_CONFIG=overlay-ppp.conf``
 
 See :ref:`cmake_options` for more instructions on how to add this option.
 
@@ -429,7 +429,7 @@ Application FOTA support
 To build the MoSh sample with application FOTA support, use the ``-DOVERLAY_CONFIG=overlay-app_fota.conf`` option.
 For example:
 
-``west build -p -b nrf9160dk_nrf9160ns -d build -- -DOVERLAY_CONFIG=overlay-app_fota.conf``
+``west build -p -b nrf9160dk_nrf9160_ns -d build -- -DOVERLAY_CONFIG=overlay-app_fota.conf``
 
 See :ref:`cmake_options` for more instructions on how to add this option.
 
@@ -439,7 +439,7 @@ LwM2M carrier library support
 To build the MoSh sample with LwM2M carrier library support, use the ``-DOVERLAY_CONFIG=overlay-lwm2m_carrier.conf`` option.
 For example:
 
-``west build -p -b nrf9160dk_nrf9160ns -d build -- -DOVERLAY_CONFIG=overlay-lwm2m_carrier.conf``
+``west build -p -b nrf9160dk_nrf9160_ns -d build -- -DOVERLAY_CONFIG=overlay-lwm2m_carrier.conf``
 
 See :ref:`cmake_options` for more instructions on how to add this option.
 
