@@ -288,8 +288,6 @@ static void on_cloud_evt_user_associated(void)
 /**@brief Callback for nRF Cloud events. */
 static void cloud_event_handler(const struct nrf_cloud_evt *evt)
 {
-	int err;
-
 	switch (evt->type) {
 	case NRF_CLOUD_EVT_TRANSPORT_CONNECTED:
 		printk("NRF_CLOUD_EVT_TRANSPORT_CONNECTED\n");
@@ -310,7 +308,9 @@ static void cloud_event_handler(const struct nrf_cloud_evt *evt)
 		printk("NRF_CLOUD_EVT_USER_ASSOCIATED\n");
 		on_cloud_evt_user_associated();
 		break;
-	case NRF_CLOUD_EVT_READY:
+	case NRF_CLOUD_EVT_READY: {
+		int err;
+
 		printk("NRF_CLOUD_EVT_READY\n");
 		display_state = LEDS_CLOUD_CONNECTED;
 		struct nrf_cloud_sa_param param = {
@@ -334,6 +334,7 @@ static void cloud_event_handler(const struct nrf_cloud_evt *evt)
 
 		sensors_init();
 		atomic_set(&send_data_enable, 1);
+	}
 		break;
 	case NRF_CLOUD_EVT_SENSOR_ATTACHED:
 		printk("NRF_CLOUD_EVT_SENSOR_ATTACHED\n");
