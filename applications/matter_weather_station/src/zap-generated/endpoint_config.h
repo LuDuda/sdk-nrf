@@ -117,19 +117,14 @@
 			/* 92 - FeatureMap, */                                                         \
 			0x00, 0x00, 0x00, 0x00,                                                        \
                                                                                                        \
-			/* Endpoint: 2, Cluster: Relative Humidity Measurement (server), big-endian */ \
+			/* Endpoint: 1, Cluster: Pressure Measurement (server), big-endian */          \
                                                                                                        \
 			/* 96 - FeatureMap, */                                                         \
 			0x00, 0x00, 0x00, 0x00,                                                        \
                                                                                                        \
-			/* Endpoint: 3, Cluster: Descriptor (server), big-endian */                    \
+			/* Endpoint: 1, Cluster: Relative Humidity Measurement (server), big-endian */ \
                                                                                                        \
 			/* 100 - FeatureMap, */                                                        \
-			0x00, 0x00, 0x00, 0x00,                                                        \
-                                                                                                       \
-			/* Endpoint: 3, Cluster: Pressure Measurement (server), big-endian */          \
-                                                                                                       \
-			/* 104 - FeatureMap, */                                                        \
 			0x00, 0x00, 0x00, 0x00,                                                        \
 	}
 
@@ -225,25 +220,20 @@
 			/* 92 - FeatureMap, */                                                            \
 			0x00, 0x00, 0x00, 0x00,                                                           \
                                                                                                           \
-			/* Endpoint: 2, Cluster: Relative Humidity Measurement (server), little-endian */ \
+			/* Endpoint: 1, Cluster: Pressure Measurement (server), little-endian */          \
                                                                                                           \
 			/* 96 - FeatureMap, */                                                            \
 			0x00, 0x00, 0x00, 0x00,                                                           \
                                                                                                           \
-			/* Endpoint: 3, Cluster: Descriptor (server), little-endian */                    \
+			/* Endpoint: 1, Cluster: Relative Humidity Measurement (server), little-endian */ \
                                                                                                           \
 			/* 100 - FeatureMap, */                                                           \
-			0x00, 0x00, 0x00, 0x00,                                                           \
-                                                                                                          \
-			/* Endpoint: 3, Cluster: Pressure Measurement (server), little-endian */          \
-                                                                                                          \
-			/* 104 - FeatureMap, */                                                           \
 			0x00, 0x00, 0x00, 0x00,                                                           \
 	}
 
 #endif // BIGENDIAN_CPU
 
-#define GENERATED_DEFAULTS_COUNT (23)
+#define GENERATED_DEFAULTS_COUNT (22)
 
 #define ZAP_TYPE(type) ZCL_##type##_ATTRIBUTE_TYPE
 #define ZAP_LONG_DEFAULTS_INDEX(index)                                                             \
@@ -275,7 +265,7 @@
 
 #define ZAP_ATTRIBUTE_MASK(mask) ATTRIBUTE_MASK_##mask
 // This is an array of EmberAfAttributeMetadata structures.
-#define GENERATED_ATTRIBUTE_COUNT 214
+#define GENERATED_ATTRIBUTE_COUNT 203
 #define GENERATED_ATTRIBUTES                                                                       \
 	{                                                                                          \
 		/* Endpoint: 0, Cluster: Identify (server) */                                      \
@@ -728,55 +718,29 @@
 			{ 0x0000FFFD, ZAP_TYPE(INT16U), 2, 0,                                      \
 			  ZAP_SIMPLE_DEFAULT(0x0004) }, /* ClusterRevision */                      \
                                                                                                    \
-			/* Endpoint: 2, Cluster: Descriptor (server) */                            \
-			{ 0x00000000, ZAP_TYPE(ARRAY), 0, ZAP_ATTRIBUTE_MASK(EXTERNAL_STORAGE),    \
-			  ZAP_EMPTY_DEFAULT() }, /* device list */                                 \
-			{ 0x00000001, ZAP_TYPE(ARRAY), 0, ZAP_ATTRIBUTE_MASK(EXTERNAL_STORAGE),    \
-			  ZAP_EMPTY_DEFAULT() }, /* server list */                                 \
-			{ 0x00000002, ZAP_TYPE(ARRAY), 0, ZAP_ATTRIBUTE_MASK(EXTERNAL_STORAGE),    \
-			  ZAP_EMPTY_DEFAULT() }, /* client list */                                 \
-			{ 0x00000003, ZAP_TYPE(ARRAY), 0, ZAP_ATTRIBUTE_MASK(EXTERNAL_STORAGE),    \
-			  ZAP_EMPTY_DEFAULT() }, /* parts list */                                  \
-			{ 0x0000FFFD, ZAP_TYPE(INT16U), 2, 0,                                      \
-			  ZAP_SIMPLE_DEFAULT(1) }, /* ClusterRevision */                           \
-                                                                                                   \
-			/* Endpoint: 2, Cluster: Relative Humidity Measurement (server) */         \
-			{ 0x00000000, ZAP_TYPE(INT16U), 2, ZAP_ATTRIBUTE_MASK(NULLABLE),           \
-			  ZAP_EMPTY_DEFAULT() }, /* measured value */                              \
-			{ 0x00000001, ZAP_TYPE(INT16U), 2, ZAP_ATTRIBUTE_MASK(NULLABLE),           \
-			  ZAP_SIMPLE_DEFAULT(0) }, /* min measured value */                        \
-			{ 0x00000002, ZAP_TYPE(INT16U), 2, ZAP_ATTRIBUTE_MASK(NULLABLE),           \
-			  ZAP_SIMPLE_DEFAULT(10000) }, /* max measured value */                    \
+			/* Endpoint: 1, Cluster: Pressure Measurement (server) */                  \
+			{ 0x00000000, ZAP_TYPE(INT16S), 2, ZAP_ATTRIBUTE_MASK(NULLABLE),           \
+			  ZAP_SIMPLE_DEFAULT(0x0000) }, /* MeasuredValue */                        \
+			{ 0x00000001, ZAP_TYPE(INT16S), 2, ZAP_ATTRIBUTE_MASK(NULLABLE),           \
+			  ZAP_EMPTY_DEFAULT() }, /* MinMeasuredValue */                            \
+			{ 0x00000002, ZAP_TYPE(INT16S), 2, ZAP_ATTRIBUTE_MASK(NULLABLE),           \
+			  ZAP_EMPTY_DEFAULT() }, /* MaxMeasuredValue */                            \
 			{ 0x0000FFFC, ZAP_TYPE(BITMAP32), 4, 0,                                    \
 			  ZAP_LONG_DEFAULTS_INDEX(96) }, /* FeatureMap */                          \
 			{ 0x0000FFFD, ZAP_TYPE(INT16U), 2, 0,                                      \
 			  ZAP_SIMPLE_DEFAULT(2) }, /* ClusterRevision */                           \
                                                                                                    \
-			/* Endpoint: 3, Cluster: Descriptor (server) */                            \
-			{ 0x00000000, ZAP_TYPE(ARRAY), 0, ZAP_ATTRIBUTE_MASK(EXTERNAL_STORAGE),    \
-			  ZAP_EMPTY_DEFAULT() }, /* device list */                                 \
-			{ 0x00000001, ZAP_TYPE(ARRAY), 0, ZAP_ATTRIBUTE_MASK(EXTERNAL_STORAGE),    \
-			  ZAP_EMPTY_DEFAULT() }, /* server list */                                 \
-			{ 0x00000002, ZAP_TYPE(ARRAY), 0, ZAP_ATTRIBUTE_MASK(EXTERNAL_STORAGE),    \
-			  ZAP_EMPTY_DEFAULT() }, /* client list */                                 \
-			{ 0x00000003, ZAP_TYPE(ARRAY), 0, ZAP_ATTRIBUTE_MASK(EXTERNAL_STORAGE),    \
-			  ZAP_EMPTY_DEFAULT() }, /* parts list */                                  \
+			/* Endpoint: 1, Cluster: Relative Humidity Measurement (server) */         \
+			{ 0x00000000, ZAP_TYPE(INT16U), 2, ZAP_ATTRIBUTE_MASK(NULLABLE),           \
+			  ZAP_EMPTY_DEFAULT() }, /* measured value */                              \
+			{ 0x00000001, ZAP_TYPE(INT16U), 2, ZAP_ATTRIBUTE_MASK(NULLABLE),           \
+			  ZAP_EMPTY_DEFAULT() }, /* min measured value */                          \
+			{ 0x00000002, ZAP_TYPE(INT16U), 2, ZAP_ATTRIBUTE_MASK(NULLABLE),           \
+			  ZAP_EMPTY_DEFAULT() }, /* max measured value */                          \
 			{ 0x0000FFFC, ZAP_TYPE(BITMAP32), 4, 0,                                    \
 			  ZAP_LONG_DEFAULTS_INDEX(100) }, /* FeatureMap */                         \
 			{ 0x0000FFFD, ZAP_TYPE(INT16U), 2, 0,                                      \
 			  ZAP_SIMPLE_DEFAULT(1) }, /* ClusterRevision */                           \
-                                                                                                   \
-			/* Endpoint: 3, Cluster: Pressure Measurement (server) */                  \
-			{ 0x00000000, ZAP_TYPE(INT16S), 2, ZAP_ATTRIBUTE_MASK(NULLABLE),           \
-			  ZAP_SIMPLE_DEFAULT(0x0000) }, /* MeasuredValue */                        \
-			{ 0x00000001, ZAP_TYPE(INT16S), 2, ZAP_ATTRIBUTE_MASK(NULLABLE),           \
-			  ZAP_SIMPLE_DEFAULT(300) }, /* MinMeasuredValue */                        \
-			{ 0x00000002, ZAP_TYPE(INT16S), 2, ZAP_ATTRIBUTE_MASK(NULLABLE),           \
-			  ZAP_SIMPLE_DEFAULT(1100) }, /* MaxMeasuredValue */                       \
-			{ 0x0000FFFC, ZAP_TYPE(BITMAP32), 4, 0,                                    \
-			  ZAP_LONG_DEFAULTS_INDEX(104) }, /* FeatureMap */                         \
-			{ 0x0000FFFD, ZAP_TYPE(INT16U), 2, 0,                                      \
-			  ZAP_SIMPLE_DEFAULT(2) }, /* ClusterRevision */                           \
 	}
 
 // This is an array of EmberAfCluster structures.
@@ -900,7 +864,7 @@
 // clang-format on
 
 #define ZAP_CLUSTER_MASK(mask) CLUSTER_MASK_##mask
-#define GENERATED_CLUSTER_COUNT 24
+#define GENERATED_CLUSTER_COUNT 22
 
 // clang-format off
 #define GENERATED_CLUSTERS { \
@@ -1125,20 +1089,9 @@
       .generatedCommandList = nullptr ,\
     },\
   { \
-      /* Endpoint: 2, Cluster: Descriptor (server) */ \
-      .clusterId = 0x0000001D,  \
+      /* Endpoint: 1, Cluster: Pressure Measurement (server) */ \
+      .clusterId = 0x00000403,  \
       .attributes = ZAP_ATTRIBUTE_INDEX(193), \
-      .attributeCount = 5, \
-      .clusterSize = 2, \
-      .mask = ZAP_CLUSTER_MASK(SERVER), \
-      .functions = NULL, \
-      .acceptedCommandList = nullptr ,\
-      .generatedCommandList = nullptr ,\
-    },\
-  { \
-      /* Endpoint: 2, Cluster: Relative Humidity Measurement (server) */ \
-      .clusterId = 0x00000405,  \
-      .attributes = ZAP_ATTRIBUTE_INDEX(198), \
       .attributeCount = 5, \
       .clusterSize = 12, \
       .mask = ZAP_CLUSTER_MASK(SERVER), \
@@ -1147,20 +1100,9 @@
       .generatedCommandList = nullptr ,\
     },\
   { \
-      /* Endpoint: 3, Cluster: Descriptor (server) */ \
-      .clusterId = 0x0000001D,  \
-      .attributes = ZAP_ATTRIBUTE_INDEX(203), \
-      .attributeCount = 6, \
-      .clusterSize = 6, \
-      .mask = ZAP_CLUSTER_MASK(SERVER), \
-      .functions = NULL, \
-      .acceptedCommandList = nullptr ,\
-      .generatedCommandList = nullptr ,\
-    },\
-  { \
-      /* Endpoint: 3, Cluster: Pressure Measurement (server) */ \
-      .clusterId = 0x00000403,  \
-      .attributes = ZAP_ATTRIBUTE_INDEX(209), \
+      /* Endpoint: 1, Cluster: Relative Humidity Measurement (server) */ \
+      .clusterId = 0x00000405,  \
+      .attributes = ZAP_ATTRIBUTE_INDEX(198), \
       .attributeCount = 5, \
       .clusterSize = 12, \
       .mask = ZAP_CLUSTER_MASK(SERVER), \
@@ -1174,13 +1116,12 @@
 
 #define ZAP_CLUSTER_INDEX(index) (&generatedClusters[index])
 
-#define ZAP_FIXED_ENDPOINT_DATA_VERSION_COUNT 23
+#define ZAP_FIXED_ENDPOINT_DATA_VERSION_COUNT 21
 
 // This is an array of EmberAfEndpointType structures.
 #define GENERATED_ENDPOINT_TYPES                                                                   \
 	{                                                                                          \
-		{ ZAP_CLUSTER_INDEX(0), 18, 290 }, { ZAP_CLUSTER_INDEX(18), 2, 18 },               \
-			{ ZAP_CLUSTER_INDEX(20), 2, 14 }, { ZAP_CLUSTER_INDEX(22), 2, 18 },        \
+		{ ZAP_CLUSTER_INDEX(0), 18, 290 }, { ZAP_CLUSTER_INDEX(18), 4, 42 },               \
 	}
 
 // Largest attribute size is needed for various buffers
@@ -1193,53 +1134,53 @@ static_assert(ATTRIBUTE_LARGEST <= CHIP_CONFIG_MAX_ATTRIBUTE_STORE_ELEMENT_SIZE,
 #define ATTRIBUTE_SINGLETONS_SIZE (41)
 
 // Total size of attribute storage
-#define ATTRIBUTE_MAX_SIZE (340)
+#define ATTRIBUTE_MAX_SIZE (332)
 
 // Number of fixed endpoints
-#define FIXED_ENDPOINT_COUNT (4)
+#define FIXED_ENDPOINT_COUNT (2)
 
 // Array of endpoints that are supported, the data inside
 // the array is the endpoint number.
 #define FIXED_ENDPOINT_ARRAY                                                                       \
 	{                                                                                          \
-		0x0000, 0x0001, 0x0002, 0x0003                                                     \
+		0x0000, 0x0001                                                                     \
 	}
 
 // Array of profile ids
 #define FIXED_PROFILE_IDS                                                                          \
 	{                                                                                          \
-		0x0103, 0x0103, 0x0103, 0x0103                                                     \
+		0x0103, 0x0103                                                                     \
 	}
 
 // Array of device types
 #define FIXED_DEVICE_TYPES                                                                         \
 	{                                                                                          \
-		{ 0x0016, 1 }, { 0x0302, 1 }, { 0x0307, 1 },                                       \
+		{ 0x0016, 1 },                                                                     \
 		{                                                                                  \
-			0x0305, 1                                                                  \
+			0x0302, 1                                                                  \
 		}                                                                                  \
 	}
 
 // Array of device type offsets
 #define FIXED_DEVICE_TYPE_OFFSETS                                                                  \
 	{                                                                                          \
-		0, 1, 2, 3                                                                         \
+		0, 1                                                                               \
 	}
 
 // Array of device type lengths
 #define FIXED_DEVICE_TYPE_LENGTHS                                                                  \
 	{                                                                                          \
-		1, 1, 1, 1                                                                         \
+		1, 1                                                                               \
 	}
 
 // Array of endpoint types supported on each endpoint
 #define FIXED_ENDPOINT_TYPES                                                                       \
 	{                                                                                          \
-		0, 1, 2, 3                                                                         \
+		0, 1                                                                               \
 	}
 
 // Array of networks supported on each endpoint
 #define FIXED_NETWORKS                                                                             \
 	{                                                                                          \
-		0, 0, 0, 0                                                                         \
+		0, 0                                                                               \
 	}

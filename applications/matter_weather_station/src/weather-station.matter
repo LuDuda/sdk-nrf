@@ -156,7 +156,6 @@ server cluster Descriptor = 29 {
   readonly attribute CLUSTER_ID serverList[] = 1;
   readonly attribute CLUSTER_ID clientList[] = 2;
   readonly attribute ENDPOINT_NO partsList[] = 3;
-  readonly attribute attrib_id attributeList[] = 65531;
   readonly attribute bitmap32 featureMap = 65532;
   readonly attribute int16u clusterRevision = 65533;
 }
@@ -1404,45 +1403,21 @@ endpoint 1 {
     ram      attribute featureMap;
     ram      attribute clusterRevision default = 0x0004;
   }
-}
 
-endpoint 2 {
-
-  server cluster Descriptor {
-    callback attribute deviceList;
-    callback attribute serverList;
-    callback attribute clientList;
-    callback attribute partsList;
-    callback attribute attributeList;
-    ram      attribute clusterRevision default = 1;
+  server cluster PressureMeasurement {
+    ram      attribute measuredValue;
+    ram      attribute minMeasuredValue;
+    ram      attribute maxMeasuredValue;
+    ram      attribute featureMap;
+    ram      attribute clusterRevision default = 2;
   }
 
   server cluster RelativeHumidityMeasurement {
     ram      attribute measuredValue;
     ram      attribute minMeasuredValue;
-    ram      attribute maxMeasuredValue default = 10000;
-    ram      attribute featureMap;
-    ram      attribute clusterRevision default = 2;
-  }
-}
-
-endpoint 3 {
-
-  server cluster Descriptor {
-    callback attribute deviceList;
-    callback attribute serverList;
-    callback attribute clientList;
-    callback attribute partsList;
+    ram      attribute maxMeasuredValue;
     ram      attribute featureMap;
     ram      attribute clusterRevision default = 1;
-  }
-
-  server cluster PressureMeasurement {
-    ram      attribute measuredValue;
-    ram      attribute minMeasuredValue default = 300;
-    ram      attribute maxMeasuredValue default = 1100;
-    ram      attribute featureMap;
-    ram      attribute clusterRevision default = 2;
   }
 }
 
