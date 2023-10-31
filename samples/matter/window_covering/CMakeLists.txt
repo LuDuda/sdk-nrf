@@ -6,6 +6,10 @@
 
 cmake_minimum_required(VERSION 3.20.0)
 
+# Enable LTO for the project
+add_compile_options(-flto)
+add_link_options(-flto -fno-ipa-sra -ffunction-sections -fdata-sections)
+
 # Set Kconfig root files that will be processed as a first Kconfig for used child images.
 set(mcuboot_KCONFIG_ROOT "\\\${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/Kconfig.mcuboot.root")
 set(multiprotocol_rpmsg_KCONFIG_ROOT "\\\${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/Kconfig.multiprotocol_rpmsg.root")

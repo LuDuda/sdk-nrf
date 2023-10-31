@@ -8,6 +8,10 @@ cmake_minimum_required(VERSION 3.20.0)
 
 ################################################################################
 
+# Enable LTO for the project
+add_compile_options(-flto)
+add_link_options(-flto -fno-ipa-sra -ffunction-sections -fdata-sections)
+
 # The application uses the configuration/<board> scheme for configuration files.
 set(APPLICATION_CONFIG_DIR "${CMAKE_CURRENT_SOURCE_DIR}/configuration/\${BOARD}")
 
