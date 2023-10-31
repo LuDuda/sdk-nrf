@@ -20,6 +20,8 @@ manifest:
     # NCS repositories are hosted here.
     - name: ncs
       url-base: https://github.com/nrfconnect
+    - name: lududa
+      url-base: https://github.com/lududa
     # Third-party repository sources:
     - name: zephyrproject
       url-base: https://github.com/zephyrproject-rtos
@@ -61,7 +63,8 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: 883c3709f9c8fd845a8dfa39d2583d5c665a915b
+      remote: lududa
+      revision: lto_v3
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -142,16 +145,18 @@ manifest:
       revision: v3.3.0-ncs2
     - name: nrfxlib
       repo-path: sdk-nrfxlib
+      remote: lududa
       path: nrfxlib
-      revision: ba22034a7ce2fe6efaccb6dc61e3f9a5e0e149b2
+      revision: lto_v3
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
       revision: 4c908f47646ac082848771d3e066bd709e251dfc
     - name: matter
       repo-path: sdk-connectedhomeip
+      remote: lududa
       path: modules/lib/matter
-      revision: 1a15f4cdb4d6c1f431a12064625df06fe45e660a
+      revision: lto_v3
       submodules:
         - name: nlio
           path: third_party/nlio/repo
