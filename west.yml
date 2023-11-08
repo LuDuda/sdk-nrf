@@ -39,6 +39,8 @@ manifest:
       url-base: https://github.com/BabbleSim
     - name: bosch
       url-base: https://github.com/boschsensortec
+    - name: LuDuda
+      url-base: https://github.com/LuDuda
 
   # If not otherwise specified, the projects below should be obtained
   # from the ncs remote.
@@ -141,7 +143,8 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: v2.5.0
+      remote: LuDuda
+      revision: pr/250-ot-libs
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
@@ -149,7 +152,8 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: v2.5.0
+      remove: LuDuda
+      revision: pr/250-ot-libs
       submodules:
         - name: nlio
           path: third_party/nlio/repo
