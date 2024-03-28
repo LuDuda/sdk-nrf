@@ -39,6 +39,8 @@ manifest:
       url-base: https://github.com/BabbleSim
     - name: bosch
       url-base: https://github.com/boschsensortec
+    - name: LuDuda
+      url-base: https://github.com/LuDuda
 
   # If not otherwise specified, the projects below should be obtained
   # from the ncs remote.
@@ -153,8 +155,9 @@ manifest:
       revision: 94a349db22cd0e44136c281724ffc71b6e7391c3
     - name: matter
       repo-path: sdk-connectedhomeip
+      remote: LuDuda
       path: modules/lib/matter
-      revision: v2.6.0
+      revision: 89d10f51b9f11725580a286fb317b9a4a746bc8f
       submodules:
         - name: nlio
           path: third_party/nlio/repo
