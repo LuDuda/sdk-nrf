@@ -27,6 +27,7 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME, CONFIG_OPENTHREAD_PLATFORM_LOG_LEVEL);
 #include <openthread/instance.h>
 #include <openthread/platform/radio.h>
 #include <openthread/platform/diag.h>
+#include <openthread/platform/radio.h>
 #include <openthread/platform/time.h>
 #include <openthread/message.h>
 #if defined(CONFIG_OPENTHREAD_NAT64_TRANSLATOR)
@@ -988,6 +989,24 @@ void otPlatRadioSetShortAddress(otInstance *aInstance, otShortAddress aShortAddr
 
 	sys_put_le16(aShortAddress, short_addr_le);
 	nrf_802154_short_address_set(short_addr_le);
+}
+
+void otPlatRadioSetAlternateShortAddress(otInstance *aInstance, otShortAddress aShortAddress)
+{
+	ARG_UNUSED(aInstance);
+
+	LOG_DBG("Alternate Short Address: 0x%x", aShortAddress);
+
+	if (aShortAddress == OT_RADIO_INVALID_SHORT_ADDR)
+	{
+		nrf_802154_alternate_short_address_set(NULL);
+	}
+	else
+	{
+		uint8_t short_addr_le[2];
+		sys_put_le16(aShortAddress, short_addr_le);
+		nrf_802154_alternate_short_address_set(short_addr_le);
+	}
 }
 
 otError otPlatRadioGetTransmitPower(otInstance *aInstance, int8_t *aPower)
