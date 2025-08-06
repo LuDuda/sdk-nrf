@@ -52,4 +52,33 @@ config DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH
 	  option. Refer to the documentation for detailed instructions on partition configuration
 	  and the DFU process.
 
+config DFU_MULTI_IMAGE_PACKAGE_SYSBUILD_IMAGES
+	bool "Auto-include sysbuild images in DFU packages"
+	default y
+	help
+	  Automatically detect and include sysbuild images in DFU packages.
+	  This scans all registered sysbuild images and includes those that
+	  have DFU configuration or are explicitly enabled.
+
+	  Images are included if they have:
+	  - CONFIG_DFU_IMAGE_ID defined
+	  - CONFIG_MCUBOOT_IMAGE_NUMBER defined  
+	  - SB_CONFIG_DFU_INCLUDE_<image_name> enabled
+
+	  This replaces the need for hardcoded image inclusion and works
+	  automatically with any sysbuild image that supports DFU.
+
+config DFU_USE_SIGNED_IMAGES
+	bool "Use MCUboot signed images for DFU"
+	depends on BOOTLOADER_MCUBOOT
+	default y
+	help
+	  Use MCUboot signed binary images in DFU packages instead of unsigned images.
+	  This is recommended for production deployments.
+
+	  When enabled, the DFU system will automatically select signed binaries
+	  (*.signed.bin) for images that support MCUboot signing.
+
+	  Individual images can override this setting using SB_CONFIG_DFU_SIGNED_<image>.
+
 endif # DFU_MULTI_IMAGE_PACKAGE_BUILD

@@ -1,6 +1,9 @@
 # Copyright (c) 2024 Nordic Semiconductor ASA
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
+# Include sysbuild DFU image auto-detection
+include(${ZEPHYR_NRF_MODULE_DIR}/cmake/dfu_sysbuild_images.cmake)
+
 function(mcuboot_image_number_to_slot result image secondary)
   if(secondary)
     set(secondary_offset "+ 1")
@@ -209,6 +212,19 @@ function(dfu_app_zip_package)
     list(APPEND zip_names "nrf70.bin")
     list(APPEND signed_targets nrf70_wifi_fw_patch_target)
   endif()
+
+  # Auto-detect and include sysbuild images in ZIP
+  if(SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_SYSBUILD_IMAGES)
+    dfu_sysbuild_auto_detect_zip_images(sysbuild_bin_files sysbuild_zip_names sysbuild_zip_targets sysbuild_script_params)
+    if(sysbuild_bin_files)
+      list(APPEND bin_files ${sysbuild_bin_files})
+      list(APPEND zip_names ${sysbuild_zip_names})
+      list(APPEND signed_targets ${sysbuild_zip_targets})
+      list(APPEND generate_script_app_params ${sysbuild_script_params})
+    endif()
+  endif()
+
+
 
   if(bin_files)
     sysbuild_get(mcuboot_fw_info_firmware_version IMAGE mcuboot VAR CONFIG_FW_INFO_FIRMWARE_VERSION KCONFIG)

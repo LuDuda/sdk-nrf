@@ -7,6 +7,7 @@
 if(SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_BUILD)
   include(${ZEPHYR_BASE}/../nrf/cmake/fw_zip.cmake)
   include(${ZEPHYR_BASE}/../nrf/cmake/dfu_multi_image.cmake)
+  include(${ZEPHYR_BASE}/../nrf/cmake/dfu_sysbuild_images.cmake)
 
   set(dfu_multi_image_ids)
   set(dfu_multi_image_paths)
@@ -49,6 +50,18 @@ if(SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_BUILD)
     list(APPEND dfu_multi_image_paths "${CMAKE_BINARY_DIR}/nrf70.signed.bin")
     list(APPEND dfu_multi_image_targets nrf70_wifi_fw_patch_target)
   endif()
+
+  # Auto-detect and include sysbuild images
+  if(SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_SYSBUILD_IMAGES)
+    dfu_sysbuild_auto_detect_images(sysbuild_ids sysbuild_paths sysbuild_targets)
+    if(sysbuild_ids)
+      list(APPEND dfu_multi_image_ids ${sysbuild_ids})
+      list(APPEND dfu_multi_image_paths ${sysbuild_paths})
+      list(APPEND dfu_multi_image_targets ${sysbuild_targets})
+    endif()
+  endif()
+
+
 
   if(DEFINED dfu_multi_image_targets)
     dfu_multi_image_package(dfu_multi_image_pkg

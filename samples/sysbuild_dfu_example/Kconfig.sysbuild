@@ -1,0 +1,36 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config SENSOR_CONTROLLER_IMAGE
+	bool "Build sensor controller image"
+	default y
+	help
+	  Build a custom sensor controller image that will be automatically
+	  included in DFU packages.
+
+config EXTERNAL_MCU_IMAGE
+	bool "Build external MCU image"
+	default y
+	help
+	  Build a custom external MCU image that will be automatically
+	  included in DFU packages.
+
+# Example: Explicitly enable specific images for DFU (optional)
+config DFU_INCLUDE_sensor_controller
+	bool "Include sensor controller in DFU"
+	depends on SENSOR_CONTROLLER_IMAGE
+	default y
+	help
+	  Explicitly include the sensor controller image in DFU packages.
+	  This is optional since the image will be auto-detected if it has
+	  CONFIG_DFU_IMAGE_ID or CONFIG_MCUBOOT_IMAGE_NUMBER defined.
+
+config DFU_INCLUDE_external_mcu
+	bool "Include external MCU in DFU"
+	depends on EXTERNAL_MCU_IMAGE
+	default y
+	help
+	  Explicitly include the external MCU image in DFU packages.
