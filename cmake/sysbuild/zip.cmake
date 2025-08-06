@@ -1,6 +1,9 @@
 # Copyright (c) 2024 Nordic Semiconductor ASA
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
+# Include extra DFU image extension system
+include(${ZEPHYR_NRF_MODULE_DIR}/cmake/dfu_extra.cmake)
+
 function(mcuboot_image_number_to_slot result image secondary)
   if(secondary)
     set(secondary_offset "+ 1")
@@ -208,6 +211,19 @@ function(dfu_app_zip_package)
     list(APPEND bin_files "${CMAKE_BINARY_DIR}/nrf70.signed.bin")
     list(APPEND zip_names "nrf70.bin")
     list(APPEND signed_targets nrf70_wifi_fw_patch_target)
+  endif()
+
+  # Include extra images if enabled
+  if(SB_CONFIG_DFU_EXTRA_BINARIES AND SB_CONFIG_DFU_EXTRA_ZIP)
+    dfu_zip_get_extra(extra_bin_files extra_zip_names extra_zip_targets extra_script_params)
+    if(extra_bin_files)
+      list(LENGTH extra_bin_files extra_count)
+      list(APPEND bin_files ${extra_bin_files})
+      list(APPEND zip_names ${extra_zip_names})
+      list(APPEND signed_targets ${extra_zip_targets})
+      list(APPEND generate_script_app_params ${extra_script_params})
+      message(STATUS "DFU ZIP: Added ${extra_count} extra images to ZIP package")
+    endif()
   endif()
 
   if(bin_files)

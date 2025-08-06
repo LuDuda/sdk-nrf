@@ -52,4 +52,34 @@ config DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH
 	  option. Refer to the documentation for detailed instructions on partition configuration
 	  and the DFU process.
 
+config DFU_EXTRA_BINARIES
+	bool "Enable extra DFU binaries support"
+	help
+	  Enables support for adding extra binary files to DFU packages.
+	  This allows applications to extend DFU functionality with additional 
+	  extra firmware binaries.
+
+	  When enabled, extra binaries can be added using the dfu_add_extra_binary()
+	  CMake function. Use the sub-options below to control which DFU package
+	  types should include the extra binaries.
+
+if DFU_EXTRA_BINARIES
+
+config DFU_EXTRA_MULTI_IMAGE
+	bool "Include extra binaries in multi-image binary"
+	default y
+	help
+	  Include extra binaries in DFU multi-image binary (dfu_multi_image.bin).
+
+config DFU_EXTRA_ZIP
+	bool "Include extra binaries in ZIP packages"
+	default y
+	help
+	  Include extra binaries in DFU ZIP packages (dfu_application.zip).
+	  These packages are used for Device Firmware Update over SMP.
+
+endif # DFU_EXTRA_BINARIES
+
+
+
 endif # DFU_MULTI_IMAGE_PACKAGE_BUILD
