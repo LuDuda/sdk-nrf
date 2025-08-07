@@ -65,7 +65,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: 797a60e8542a450d615b7fd1007f3c407fae87b8
+      revision: 63febf7715f82807e3b70eb33b3365a7372412a8
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -128,7 +128,7 @@ manifest:
           compare-by-default: true
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: d69621e3032f03ddf462eb3a9d2df5af03955898
+      revision: 4bfb139af4fadbc651ea61e27d21331834ce2307
       path: bootloader/mcuboot
     - name: qcbor
       url: https://github.com/laurencelundblade/QCBOR
@@ -145,7 +145,7 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: aa1b002f7a11237e6086faa6da9eba2a85296f52
+      revision: 3567254c1693f05af73bee03a17fbca04b42b2ce
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
@@ -157,7 +157,7 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: 1ef3e65e14a4baf112391dc7dded8ada1b0c3ab2
+      revision: fc6eb0f4b1798bfd8c72b5691dd5056540b423de
       west-commands: scripts/west/west-commands.yml
       submodules:
         - name: nlio
@@ -176,14 +176,14 @@ manifest:
     - name: nrf-802154
       repo-path: sdk-nrf-802154
       path: nrf-802154
-      revision: c7857b3efcafb2b4225b18465175179fcfc36a60
+      revision: 2e3e1b9afcdcc83381cce1e80177338d0348e692
       groups:
         - nrf-802154
     - name: dragoon
       # Only for internal Nordic development
       repo-path: dragoon.git
       remote: dragoon
-      revision: 995f1f6feeb0f881c77085660c42f58a581acc2b
+      revision: 8c48a30a4c2d7148486ff6dde512f6e2b745afc1
       groups:
         - dragoon
     - name: cjson
@@ -197,7 +197,7 @@ manifest:
           compare-by-default: false
     - name: find-my
       repo-path: sdk-find-my
-      revision: 7616c0a05996782de1451f5c44591f9da72bfe19
+      revision: c74faf20d5986e56b05977bfe1f69178d2e48462
       groups:
         - find-my
     - name: azure-sdk-for-c
@@ -246,7 +246,7 @@ manifest:
       remote: throwtheswitch
     - name: memfault-firmware-sdk
       path: modules/lib/memfault-firmware-sdk
-      revision: 1.26.0
+      revision: 1.28.0
       remote: memfault
     - name: bsim
       repo-path: bsim_west

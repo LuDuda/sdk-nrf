@@ -360,6 +360,7 @@ NRF = [
     ("ug_matter_gs_testing_thread_separate_otbr_android", "protocols/matter/getting_started/testing/index"), # Matter over Thread: Configuring Border Router and Android controller on separate devices (removed after 2.2.0)
     ("ug_matter_gs_testing_wifi_mobile", "protocols/matter/getting_started/testing/index"), # Matter over Wi-Fi: Configuring CHIP Tool for Android (removed after 2.2.0)
     ("ug_matter_gs_tools", "protocols/matter/getting_started/tools"), # Matter tools
+    ("protocols/matter/getting_started/manufacturer_cluster_editor_tool", "protocols/matter/getting_started/tools"), # Matter Cluster Editor tool page (removed for v3.1.0)
     ("ug_matter_gs_kconfig", "protocols/matter/getting_started/kconfig"), # Enabling Matter in Kconfig
     ("ug_matter_gs_advanced_kconfigs", "protocols/matter/getting_started/advanced_kconfigs"), # Advanced Matter Kconfig options
     ("ug_matter_gs_adding_clusters", "protocols/matter/getting_started/adding_clusters"), # Adding clusters to Matter application
@@ -540,7 +541,8 @@ NRF = [
     ("libraries/bluetooth_services/services/nus_client", "libraries/bluetooth/services/nus_client"),
     ("libraries/bluetooth_services/services/rscs", "libraries/bluetooth/services/rscs"),
     ("libraries/bluetooth_services/services/throughput", "libraries/bluetooth/services/throughput"),
-    ("libraries/bluetooth_services/services/wifi_prov", "libraries/bluetooth/services/wifi_prov"),
+    ("libraries/bluetooth_services/services/wifi_prov", "libraries/bluetooth/services/wifi_prov_ble"),
+    ("libraries/bluetooth/services/wifi_prov", "libraries/bluetooth/services/wifi_prov_ble"),
     ("libraries/networking/nrf_cloud_agps", "libraries/networking/nrf_cloud_agnss"), # nRF Cloud A-GNSS
     ("libraries/bootloader/index", "libraries/security/bootloader/index"), # Bootloader libraries (landing)
     ("libraries/bootloader/bl_crypto", "libraries/security/bootloader/bl_crypto"), # Bootloader crypto
