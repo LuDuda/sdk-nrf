@@ -198,6 +198,20 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
 #define SDC_SYNC_TRANSFER_MEM_SIZE 0
 #endif
 
+#if defined(CONFIG_BT_CTLR_FRAME_SPACE_UPDATE)
+#define SDC_FRAME_SPACE_UPDATE_MEM_SIZE \
+	SDC_MEM_FRAME_SPACE_UPDATE(SDC_CENTRAL_COUNT + PERIPHERAL_COUNT)
+#else
+#define SDC_FRAME_SPACE_UPDATE_MEM_SIZE 0
+#endif
+
+#if defined(CONFIG_BT_CTLR_EXTENDED_FEAT_SET)
+#define SDC_EXTENDED_FEAT_SET_MEM_SIZE \
+	SDC_MEM_EXTENDED_FEATURE_SET(SDC_CENTRAL_COUNT + PERIPHERAL_COUNT)
+#else
+#define SDC_EXTENDED_FEAT_SET_MEM_SIZE 0
+#endif
+
 #if defined(CONFIG_BT_CTLR_CONN_ISO)
 #define SDC_MEM_CIG SDC_MEM_PER_CIG(CONFIG_BT_CTLR_CONN_ISO_GROUPS)
 #define SDC_MEM_CIS \
@@ -278,6 +292,8 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
 		      (SDC_LE_POWER_CONTROL_MEM_SIZE) + \
 		      (SDC_SUBRATING_MEM_SIZE) + \
 		      (SDC_SYNC_TRANSFER_MEM_SIZE) + \
+		      (SDC_FRAME_SPACE_UPDATE_MEM_SIZE) + \
+		      (SDC_EXTENDED_FEAT_SET_MEM_SIZE) + \
 		      (SDC_PERIODIC_ADV_MEM_SIZE) + \
 		      (SDC_PERIODIC_ADV_RSP_MEM_SIZE) + \
 		      (SDC_PERIODIC_SYNC_MEM_SIZE) + \
@@ -470,7 +486,7 @@ static int data_packet_process(const struct device *dev, uint8_t *hci_buf)
 	bc = bt_acl_flags_bc(flags);
 
 	if (len + sizeof(*hdr) > HCI_RX_BUF_SIZE) {
-		LOG_ERR("Event buffer too small. %u > %u",
+		LOG_ERR("Event buffer too small. %zu > %u",
 			len + sizeof(*hdr),
 			HCI_RX_BUF_SIZE);
 		return -ENOMEM;
@@ -501,7 +517,7 @@ static int iso_data_packet_process(const struct device *dev, uint8_t *hci_buf)
 	}
 
 	if (len + sizeof(*hdr) > HCI_RX_BUF_SIZE) {
-		LOG_ERR("Event buffer too small. %u > %u",
+		LOG_ERR("Event buffer too small. %zu > %u",
 			len + sizeof(*hdr),
 			HCI_RX_BUF_SIZE);
 		return -ENOMEM;
@@ -567,7 +583,7 @@ static int event_packet_process(const struct device *dev, uint8_t *hci_buf)
 	struct net_buf *evt_buf;
 
 	if (hdr->len + sizeof(*hdr) > HCI_RX_BUF_SIZE) {
-		LOG_ERR("Event buffer too small. %u > %u",
+		LOG_ERR("Event buffer too small. %zu > %u",
 			hdr->len + sizeof(*hdr),
 			HCI_RX_BUF_SIZE);
 		return -ENOMEM;
@@ -862,6 +878,13 @@ static int configure_supported_features(void)
 		}
 	}
 
+	if (IS_ENABLED(CONFIG_BT_CTLR_DF_ADV_CTE_TX)) {
+		err = sdc_support_le_connectionless_cte_transmitter();
+		if (err) {
+			return -ENOTSUP;
+		}
+	}
+
 	if (IS_ENABLED(CONFIG_BT_CTLR_LE_POWER_CONTROL)) {
 		if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
 			err = sdc_support_le_power_control_central();
@@ -979,6 +1002,28 @@ static int configure_supported_features(void)
 		}
 	}
 
+	if (IS_ENABLED(CONFIG_BT_CTLR_FRAME_SPACE_UPDATE)) {
+		if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
+			err = sdc_support_frame_space_update_central();
+			if (err) {
+				return -ENOTSUP;
+			}
+		}
+		if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
+			err = sdc_support_frame_space_update_peripheral();
+			if (err) {
+				return -ENOTSUP;
+			}
+		}
+	}
+
+	if (IS_ENABLED(CONFIG_BT_CTLR_EXTENDED_FEAT_SET)) {
+		err = sdc_support_extended_feature_set();
+		if (err) {
+			return -ENOTSUP;
+		}
+	}
+
 	if (IS_ENABLED(CONFIG_BT_CTLR_CHANNEL_SOUNDING_TEST)) {
 		err = sdc_support_channel_sounding_test();
 		if (err) {
@@ -1023,6 +1068,13 @@ static int configure_supported_features(void)
 
 	if (IS_ENABLED(CONFIG_BT_CTLR_SDC_LE_POWER_CLASS_1)) {
 		err = sdc_support_le_power_class_1();
+		if (err) {
+			return -ENOTSUP;
+		}
+	}
+
+	if (IS_ENABLED(CONFIG_BT_CTLR_PRIVACY)) {
+		err = sdc_support_le_privacy();
 		if (err) {
 			return -ENOTSUP;
 		}
@@ -1313,11 +1365,11 @@ static int configure_memory_usage(void)
 	}
 #endif
 
-	LOG_DBG("BT mempool size: %u, required: %u",
+	LOG_DBG("BT mempool size: %zu, required: %u",
 	       sizeof(sdc_mempool), required_memory);
 
 	if (required_memory > sizeof(sdc_mempool)) {
-		LOG_ERR("Allocated memory too low: %u < %u",
+		LOG_ERR("Allocated memory too low: %zu < %u",
 		       sizeof(sdc_mempool), required_memory);
 		k_panic();
 		/* No return from k_panic(). */
@@ -1395,6 +1447,17 @@ static int hci_driver_open(const struct device *dev, bt_hci_recv_t recv_func)
 		return -ENOTSUP;
 	}
 #endif /* CONFIG_BT_PER_ADV */
+
+#if defined(CONFIG_BT_CTLR_CHANNEL_SOUNDING)
+	sdc_hci_cmd_vs_set_cs_event_length_t cs_event_length_params = {
+		.cs_event_length_us = CONFIG_BT_CTLR_SDC_CS_EVENT_LEN_DEFAULT
+	};
+	err = sdc_hci_cmd_vs_set_cs_event_length(&cs_event_length_params);
+	if (err) {
+		MULTITHREADING_LOCK_RELEASE();
+		return -ENOTSUP;
+	}
+#endif /* CONFIG_BT_CTLR_CHANNEL_SOUNDING */
 
 #if defined(CONFIG_BT_CTLR_SDC_BIG_RESERVED_TIME_US)
 	sdc_hci_cmd_vs_big_reserved_time_set_t big_reserved_time_params = {

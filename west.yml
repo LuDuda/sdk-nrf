@@ -65,7 +65,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: 63febf7715f82807e3b70eb33b3365a7372412a8
+      revision: a9c15a8b8d74a49a0864cb95f6a1bb41f5141599
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -128,7 +128,7 @@ manifest:
           compare-by-default: true
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: 4bfb139af4fadbc651ea61e27d21331834ce2307
+      revision: e1f2ab3806ce7ebc7ef34b3fc04272e747590745
       path: bootloader/mcuboot
     - name: qcbor
       url: https://github.com/laurencelundblade/QCBOR
@@ -141,11 +141,11 @@ manifest:
     - name: oberon-psa-crypto
       path: modules/crypto/oberon-psa-crypto
       repo-path: sdk-oberon-psa-crypto
-      revision: 975ee6386efeec257e6af206706ecd27860a07cb
+      revision: d682b30a4498ecbaa8992e909b8d8c31f4988956
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 3567254c1693f05af73bee03a17fbca04b42b2ce
+      revision: b492d688f201ecd7880e0898e1b166cd02cc266a
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
@@ -157,7 +157,7 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: fc6eb0f4b1798bfd8c72b5691dd5056540b423de
+      revision: fe650a3ee4948ef1a2edd55a7fe4f6eb561c9e64
       west-commands: scripts/west/west-commands.yml
       submodules:
         - name: nlio
@@ -176,14 +176,14 @@ manifest:
     - name: nrf-802154
       repo-path: sdk-nrf-802154
       path: nrf-802154
-      revision: 2e3e1b9afcdcc83381cce1e80177338d0348e692
+      revision: 5a34646bdebdddafe5902119ad3c894be7d051ce
       groups:
         - nrf-802154
     - name: dragoon
       # Only for internal Nordic development
       repo-path: dragoon.git
       remote: dragoon
-      revision: 8c48a30a4c2d7148486ff6dde512f6e2b745afc1
+      revision: 124494f2406783eeeac5cbb33fdceb0c708842c1
       groups:
         - dragoon
     - name: cjson
@@ -197,7 +197,7 @@ manifest:
           compare-by-default: false
     - name: find-my
       repo-path: sdk-find-my
-      revision: c74faf20d5986e56b05977bfe1f69178d2e48462
+      revision: 81777811acaad02e69135e8124cf44835efd6873
       groups:
         - find-my
     - name: azure-sdk-for-c
@@ -225,7 +225,7 @@ manifest:
     - name: openthread
       repo-path: sdk-openthread
       path: modules/lib/openthread
-      revision: ncs-thread-reference-20250402
+      revision: 63164bda951d94adf925b7f6fedb89981729cc12
       userdata:
         ncs:
           upstream-url: https://github.com/openthread/openthread

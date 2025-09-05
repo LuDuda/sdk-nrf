@@ -200,6 +200,12 @@ function(mcuboot_sign_merged_nrf54h20 merged_hex main_image)
     set(imgtool_args --sha 512 ${imgtool_args})
   endif()
 
+  if(NOT "${keyfile_enc}" STREQUAL "")
+    if(SB_CONFIG_BOOT_ENCRYPTION_ALG_AES_256)
+      set(imgtool_args ${imgtool_args} --encrypt-keylen 256)
+    endif()
+  endif()
+
   # Set up .hex outputs.
   if(SB_CONFIG_BUILD_OUTPUT_HEX)
     list(APPEND byproducts ${output}.signed.hex)
@@ -246,12 +252,15 @@ function(mcuboot_sign_merged_nrf54h20 merged_hex main_image)
 
   # Set up .bin outputs.
   if(SB_CONFIG_BUILD_OUTPUT_BIN)
+    set(bin_byproducts)
     foreach(hex_file ${byproducts})
       string(REGEX REPLACE "\\.[^.]*$" "" file_path ${hex_file})
       list(APPEND imgtool_cmd COMMAND
         ${PYTHON_EXECUTABLE} ${HEX2BIN} ${hex_file} ${file_path}.bin
       )
+      list(APPEND bin_byproducts ${file_path}.bin)
     endforeach()
+    list(APPEND byproducts ${bin_byproducts})
   endif()
 
   add_custom_target(

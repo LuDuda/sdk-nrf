@@ -156,7 +156,7 @@ endchoice
 
 config BOOT_SIGNATURE_TYPE_PURE
 	bool "Verify signature directly over image"
-	depends on SOC_SERIES_NRF54LX
+	depends on SOC_SERIES_NRF54LX || SOC_SERIES_NRF54HX
 	depends on BOOT_SIGNATURE_TYPE_ED25519
 	help
 	  The image signature will be verified over image rather than
@@ -197,15 +197,6 @@ config MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE
 	depends on MCUBOOT_SIGNATURE_USING_KMU
 	help
 	  If enabled, the build system will generate keyfile.json file in the build directory.
-
-config NRF_MCUBOOT_HMAC_SHA512
-	bool "Use SHA256 for HMAC"
-	depends on BOOT_ENCRYPTION && SOC_SERIES_NRF54LX && BOOT_SIGNATURE_TYPE_ED25519
-	help
-	  Default is to use SHA256 for HMAC/HKDF ECIES-X25519 key exchange is used.
-	  This means that both SHA256 and SHA512 support has to be compiled in.
-	  Enabling this option switches to SHA512 for HMAC/HKDF slightly reducing
-	  MCUboot code size.
 
 endif
 

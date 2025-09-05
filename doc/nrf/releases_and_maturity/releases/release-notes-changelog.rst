@@ -1,6 +1,6 @@
 .. _ncs_release_notes_changelog:
 
-Changelog for |NCS| v3.0.99
+Changelog for |NCS| v3.1.99
 ###########################
 
 .. contents::
@@ -23,7 +23,7 @@ Known issues
 ************
 
 Known issues are only tracked for the latest official release.
-See `known issues for nRF Connect SDK v3.0.0`_ for the list of issues valid for the latest release.
+See `known issues for nRF Connect SDK v3.1.0`_ for the list of issues valid for the latest release.
 
 Changelog
 *********
@@ -33,7 +33,8 @@ The following sections provide detailed lists of changes by component.
 IDE, OS, and tool support
 =========================
 
-|no_changes_yet_note|
+* Added macOS 26 support (Tier 3) to the table listing :ref:`supported operating systems for proprietary tools <additional_nordic_sw_tools_os_support>`.
+* Updated the required `SEGGER J-Link`_ version to v8.60.
 
 Board support
 =============
@@ -113,12 +114,13 @@ Developing with custom boards
 Developing with coprocessors
 ============================
 
-* Added the :ref:`ug_hpf_softperipherals_comparison` documentation page, describing potential use cases and differences between the two solutions.
+|no_changes_yet_note|
 
 Security
 ========
 
-|no_changes_yet_note|
+* Added CRACEN and nrf_oberon driver support for nRF54LM20.
+  For the list of supported features and limitations, see the :ref:`ug_crypto_supported_features` page.
 
 Protocols
 =========
@@ -138,7 +140,11 @@ Bluetooth® LE
 Bluetooth Mesh
 --------------
 
-|no_changes_yet_note|
+* Updated the NLC profile configuration system:
+
+  * Introduced individual profile configuration options for better user control.
+  * Deprecated the ``CONFIG_BT_MESH_NLC_PERF_CONF`` and ``CONFIG_BT_MESH_NLC_PERF_DEFAULT`` Kconfig options.
+    Existing configurations continue to work but you should migrate to individual profile options.
 
 DECT NR+
 --------
@@ -148,7 +154,7 @@ DECT NR+
 Enhanced ShockBurst (ESB)
 -------------------------
 
-|no_changes_yet_note|
+* Added the :ref:`esb_monitor_mode` feature.
 
 Gazell
 ------
@@ -159,12 +165,6 @@ Matter
 ------
 
 |no_changes_yet_note|
-
-* Removed:
-
-  * The nRF Connect Matter Manufacturer Cluster Editor tool page.
-    The tool is now available in the `nRF Connect for Desktop`_ app as the Matter Cluster Editor app.
-    For installation instructions and more information about the tool, see the `Matter Cluster Editor app`_ documentation.
 
 Matter fork
 +++++++++++
@@ -179,7 +179,7 @@ nRF IEEE 802.15.4 radio driver
 Thread
 ------
 
-|no_changes_yet_note|
+* Updated the :ref:`thread_sed_ssed` documentation to clarify the impact of the SSED configuration on the device's power consumption and provide a guide for :ref:`thread_ssed_fine_tuning` of SSED devices.
 
 Wi-Fi®
 ------
@@ -204,27 +204,48 @@ IPC radio firmware
 Matter bridge
 -------------
 
-|no_changes_yet_note|
+* Updated the application to store a portion of the application code related to the nRF70 Series Wi-Fi firmware in the external flash memory by default.
+  This change breaks the DFU between the previous |NCS| versions and the |NCS| v3.2.0.
+  To fix this, you need to disable storing the Wi-Fi firmware patch in external memory.
+  See the :ref:`migration guide <migration_3.2_required>` for more information.
 
 nRF5340 Audio
 -------------
 
-|no_changes_yet_note|
+* Added the API documentation in the header files listed on the :ref:`audio_api` page.
+* Updated:
+
+  * The audio application targeting the :zephyr:board:`nrf5340dk` to use pins **P1.5** to **P1.9** for the I2S interface instead of **P0.13** to **P0.17**.
+    This change was made to avoid conflicts with the onboard peripherals on the nRF5340 DK.
+  * The :ref:`Audio application API documentation <audio_api>` page.
 
 nRF Desktop
 -----------
 
-|no_changes_yet_note|
+  * Updated:
+
+    * The memory layouts for the ``nrf54lm20dk/nrf54lm20a/cpuapp`` board target to make more space for the application code.
+      This change in the partition map of every nRF54LM20 configuration is a breaking change and cannot be performed using DFU.
+      As a result, the DFU procedure will fail if you attempt to upgrade the application firmware based on one of the |NCS| v3.1 releases.
+    * The application and MCUboot configurations for the ``nrf54lm20dk/nrf54lm20a/cpuapp`` board target to use the CRACEN hardware crypto driver instead of the Oberon software crypto driver.
+      The application image signature is verified with the CRACEN hardware peripheral.
+    * The MCUboot configurations for the ``nrf54lm20dk/nrf54lm20a/cpuapp`` board target to use the KMU-based key storage.
+      The public key used by MCUboot for validating the application image is securely stored in the KMU hardware peripheral.
+      To simplify the programming procedure, the application is configured to use the automatic KMU provisioning.
+      The KMU provisioning is performed by the west runner as a part of the ``west flash`` command when the ``--erase`` or ``--recover`` flag is used.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
 
-|no_changes_yet_note|
+* Updated the application to change the default libc from the :ref:`zephyr:c_library_newlib` to the :ref:`zephyr:c_library_picolibc` to align with the |NCS| and Zephyr.
+
+* Removed support for the ``thingy53/nrf5340/cpuapp/ns`` build target.
 
 Serial LTE modem
 ----------------
 
-|no_changes_yet_note|
+* Updated to use the new ``SEC_TAG_TLS_INVALID`` definition as a placeholder for security tags.
+
 
 Thingy:53: Matter weather station
 ---------------------------------
@@ -244,22 +265,93 @@ Amazon Sidewalk samples
 Bluetooth samples
 -----------------
 
-|no_changes_yet_note|
+* Updated the network core image applications for the following samples from the :zephyr:code-sample:`bluetooth_hci_ipc` sample to the :ref:`ipc_radio` application for multicore builds:
+
+  * :ref:`bluetooth_conn_time_synchronization`
+  * :ref:`bluetooth_iso_combined_bis_cis`
+  * :ref:`bluetooth_isochronous_time_synchronization`
+  * :ref:`bt_scanning_while_connecting`
+  * :ref:`channel_sounding_ras_initiator`
+  * :ref:`channel_sounding_ras_reflector`
+
+  The :ref:`ipc_radio` application is commonly used for multicore builds in other |NCS| samples and projects.
+  Hence, this is to align with the common practice.
+
+* Removed support for the ``thingy53/nrf5340/cpuapp/ns`` build target from the following samples:
+
+   * :ref:`peripheral_lbs`
+   * :ref:`peripheral_status`
+   * :ref:`peripheral_uart`
 
 Bluetooth Mesh samples
 ----------------------
 
-|no_changes_yet_note|
+* :ref:`ble_mesh_dfu_distributor` sample:
+
+  * Added support for external flash memory for the ``nrf52840dk/nrf52840`` as the secondary partition for the DFU process.
+
+* :ref:`ble_mesh_dfu_target` sample:
+
+  * Added support for external flash memory for the ``nrf52840dk/nrf52840`` as the secondary partition for the DFU process.
+
+* :ref:`bluetooth_mesh_sensor_client` sample:
+
+  * Updated:
+
+    * To demonstrate the Bluetooth :ref:`ug_bt_mesh_nlc` HVAC Integration profile.
+    * The following Mesh samples to use individual NLC profile configurations instead of the deprecated options:
+
+      * :ref:`bluetooth_mesh_light_dim`
+      * :ref:`bluetooth_mesh_light_lc`
+      * :ref:`bluetooth_mesh_sensor_server`
+      * :ref:`bluetooth_mesh_sensor_client`
 
 Bluetooth Fast Pair samples
 ---------------------------
 
-|no_changes_yet_note|
+* :ref:`fast_pair_locator_tag` sample:
+
+  * Updated:
+
+    * The memory layout for the ``nrf54lm20dk/nrf54lm20a/cpuapp`` board target to make more space for the application code.
+      This change in the nRF54LM20 partition map is a breaking change and cannot be performed using DFU.
+      As a result, the DFU procedure will fail if you attempt to upgrade the sample firmware based on one of the |NCS| v3.1 releases.
+    * The application and MCUBoot configurations for the ``nrf54lm20dk/nrf54lm20a/cpuapp`` board target to use the CRACEN hardware crypto driver instead of the Oberon software crypto driver.
+      Note, that the Fast Pair subsystem still uses the Oberon software library.
+      The application image signature is verified with the CRACEN hardware peripheral.
+    * The MCUBoot configuration for the ``nrf54lm20dk/nrf54lm20a/cpuapp`` board target to use the KMU-based key storage.
+      The public key used by MCUboot for validating the application image is securely stored in the KMU hardware peripheral.
+      To simplify the programming procedure, the samples are configured to use the automatic KMU provisioning.
+      The KMU provisioning is performed by the west runner as a part of the ``west flash`` command when the ``--erase`` or ``--recover`` flag is used.
+
+* :ref:`fast_pair_input_device` sample:
+
+  * Updated the application configuration for the ``nrf54lm20dk/nrf54lm20a/cpuapp`` board target to use the CRACEN hardware crypto driver instead of the Oberon software crypto driver.
+    Note, that the Fast Pair subsystem still uses the Oberon software library.
 
 Cellular samples
 ----------------
 
-|no_changes_yet_note|
+* Added:
+
+  * The :ref:`nrf_cloud_coap_cell_location` sample to demonstrate how to use the `nRF Cloud CoAP API`_ for nRF Cloud's cellular location service.
+  * The :ref:`nrf_cloud_coap_fota_sample` sample to demonstrate how to use the `nRF Cloud CoAP API`_ for FOTA updates.
+  * The :ref:`nrf_cloud_coap_device_message` sample to demonstrate how to use the `nRF Cloud CoAP API`_ for device messages.
+
+* :ref:`nrf_cloud_rest_cell_location` sample:
+
+  * Added runtime setting of the log level for the nRF Cloud logging feature.
+
+* Updated the following samples to use the new ``SEC_TAG_TLS_INVALID`` definition:
+
+  * :ref:`modem_shell_application`
+  * :ref:`http_application_update_sample`
+  * :ref:`http_modem_delta_update_sample`
+  * :ref:`http_modem_full_update_sample`
+
+* :ref:`modem_shell_application` sample:
+
+  * Added support for NTN NB-IoT to the ``link sysmode`` and ``link edrx`` commands.
 
 Cryptography samples
 --------------------
@@ -276,6 +368,11 @@ DECT NR+ samples
 
 |no_changes_yet_note|
 
+DFU samples
+-----------
+
+* Added the :ref:`dfu_multi_image_sample` sample to demonstrate how to use the :ref:`lib_dfu_target` library.
+
 Edge Impulse samples
 --------------------
 
@@ -284,7 +381,7 @@ Edge Impulse samples
 Enhanced ShockBurst samples
 ---------------------------
 
-|no_changes_yet_note|
+* Added the :ref:`esb_monitor` sample to demonstrate how to use the :ref:`ug_esb` protocol in Monitor mode.
 
 Gazell samples
 --------------
@@ -299,7 +396,16 @@ Keys samples
 Matter samples
 --------------
 
-|no_changes_yet_note|
+* Added the :ref:`matter_temperature_sensor_sample` sample that demonstrates how to implement and test a Matter temperature sensor device.
+* Updated all Matter over Wi-Fi samples and applications to store a portion of the application code related to the nRF70 Series Wi-Fi firmware in the external flash memory by default.
+  This change breaks the DFU between the previous |NCS| versions and the |NCS| v3.2.0.
+  To fix this, you need to disable storing the Wi-Fi firmware patch in external memory.
+  See the :ref:`migration guide <migration_3.2_required>` for more information.
+
+* :ref:`matter_lock_sample` sample:
+
+   * Added a callback for the auto-relock feature.
+     This resolves the :ref:`known issue <known_issues>` KRKNWK-20691.
 
 Networking samples
 ------------------
@@ -424,7 +530,12 @@ Security libraries
 Modem libraries
 ---------------
 
-|no_changes_yet_note|
+* :ref:`lte_lc_readme` library:
+
+  * Added:
+
+    * Support for NTN NB-IoT system mode.
+    * eDRX support for NTN NB-IoT.
 
 Multiprotocol Service Layer libraries
 -------------------------------------
@@ -434,7 +545,30 @@ Multiprotocol Service Layer libraries
 Libraries for networking
 ------------------------
 
-|no_changes_yet_note|
+* Updated the following libraries to use the new ``SEC_TAG_TLS_INVALID`` definition for checking whether a security tag is valid:
+
+  * :ref:`lib_aws_fota`
+  * :ref:`lib_fota_download`
+  * :ref:`lib_ftp_client`
+
+* :ref:`lib_nrf_provisioning` library:
+
+  * Added a blocking call to wait for a functional-mode change, relocating the logic from the app into the library.
+
+  * Updated:
+
+    * By making internal scheduling optional.
+      Applications can now trigger provisioning manually using the :kconfig:option:`CONFIG_NRF_PROVISIONING_SCHEDULED` Kconfig option.
+    * By moving root CA provisioning to modem initialization callback to avoid blocking and ensure proper state.
+    * By expanding the event handler to report more provisioning events, including failures.
+    * By making the event handler callback mandatory to notify the application of failures and prevent silent errors.
+    * By unifying the device‐mode and modem‐mode callbacks into a single handler for cleaner integration.
+    * The documentation and sample code accordingly.
+
+  * Fixed multiple bugs and enhanced error handling.
+
+* Deprecated the :ref:`lib_nrf_cloud_rest` library.
+  Use the :ref:`lib_nrf_cloud_coap` library instead.
 
 Libraries for NFC
 -----------------
@@ -464,7 +598,7 @@ See the changelog for each library in the :doc:`nrfxlib documentation <nrfxlib:R
 Scripts
 =======
 
-|no_changes_yet_note|
+* Added the :ref:`esb_sniffer_scripts` scripts for the :ref:`esb_monitor` sample.
 
 Integrations
 ============
@@ -522,21 +656,21 @@ Zephyr
 
 .. NOTE TO MAINTAINERS: All the Zephyr commits in the below git commands must be handled specially after each upmerge and each nRF Connect SDK release.
 
-The Zephyr fork in |NCS| (``sdk-zephyr``) contains all commits from the upstream Zephyr repository up to and including ``9a6f116a6aa9b70b517a420247cd8d33bbbbaaa3``, with some |NCS| specific additions.
+The Zephyr fork in |NCS| (``sdk-zephyr``) contains all commits from the upstream Zephyr repository up to and including ``0fe59bf1e4b96122c3467295b09a034e399c5ee6``, with some |NCS| specific additions.
 
-For the list of upstream Zephyr commits (not including cherry-picked commits) incorporated into nRF Connect SDK since the most recent release, run the following command from the :file:`ncs/zephyr` repository (after running ``west update``):
+For the list of upstream Zephyr commits (not including cherry-picked commits) incorporated into |NCS| since the most recent release, run the following command from the :file:`ncs/zephyr` repository (after running ``west update``):
 
 .. code-block:: none
 
-   git log --oneline 9a6f116a6a ^fdeb735017
+   git log --oneline 0fe59bf1e4 ^fdeb735017
 
 For the list of |NCS| specific commits, including commits cherry-picked from upstream, run:
 
 .. code-block:: none
 
-   git log --oneline manifest-rev ^9a6f116a6a
+   git log --oneline manifest-rev ^0fe59bf1e4
 
-The current |NCS| main branch is based on revision ``9a6f116a6a`` of Zephyr.
+The current |NCS| main branch is based on revision ``0fe59bf1e4`` of Zephyr.
 
 .. note::
    For possible breaking changes and changes between the latest Zephyr release and the current Zephyr version, refer to the :ref:`Zephyr release notes <zephyr_release_notes>`.
@@ -556,12 +690,12 @@ Trusted Firmware-M
 
 |no_changes_yet_note|
 
-cJSON
-=====
-
-|no_changes_yet_note|
-
 Documentation
 =============
 
-|no_changes_yet_note|
+* Updated:
+
+  * The :ref:`emds_readme_application_integration` section in the :ref:`emds_readme` library documentation to clarify the EMDS storage context usage.
+  * The Emergency data storage section in the :ref:`bluetooth_mesh_light_lc` sample documentation to clarify the EMDS storage context implementation and usage.
+  * The :ref:`ble_mesh_dfu_distributor` sample documentation to clarify the external flash support.
+  * The :ref:`ble_mesh_dfu_target` sample documentation to clarify the external flash support.

@@ -1,7 +1,7 @@
 .. _dfu_target_sample:
 
-DFU Target Sample
-#################
+DFU Target
+##########
 
 .. contents::
    :local:
@@ -13,7 +13,7 @@ Currently, it only supports DFU targets for MCUboot.
 Requirements
 ************
 
-The sample supports the following development kits:
+The sample supports the following development kit:
 
 .. table-from-sample-yaml::
 
@@ -93,6 +93,7 @@ After programming the sample to your development kit, perform the following step
      ``<image_size>`` is the size, in bytes, of the file :file:`build_v2/dfu_target/zephyr/zephyr.signed.bin`.
 
    * Step-by-step update:
+
      #. Get the image type::
 
            dfu_target image_type
@@ -136,4 +137,4 @@ Dependencies
 This sample uses the following |NCS| libraries:
 
 * :ref:`lib_dfu_target`
-* MCUBOOT
+* :ref:`MCUboot <mcuboot_index_ncs>`

@@ -25,7 +25,7 @@
  *      Bits 15-8:  slot-id
  *      Bits 7-0:   number of slots
  */
-#define PROVISIONING_SLOT 250
+#define PROVISIONING_SLOT 186
 
 #define SECONDARY_SLOT_METADATA_VALUE UINT32_MAX
 
@@ -33,16 +33,7 @@ extern nrf_security_mutex_t cracen_mutex_symmetric;
 
 #define KMU_PUSH_AREA_SIZE 64
 
-/* When execution in place (CONFIG_XIP) is not enabled, which in practice means that when Zephyr is
- * built for a RAM loaded image, the Zephyr linker script always places the RAM loaded image in the
- * top address of the RAM and then loads the linker scripts defined with the Zephyr SECTION_PROLOGUE
- * macros. Using SECTION_PROLOGUE macros to set the address of the kmu_push_area is
- * incompatible with RAM loaded images. The Zephyr reserved-memory devicetree methodology works for
- * both use cases but it requires heavy updates of multiple devicetree files and overlays. In order
- * to support the RAM loaded images use cases faster initial support for reserving the memory of
- * nrf_kmu_reserved_push_area though devicetree is limited to RAM loaded images.
- */
-#if DT_NODE_EXISTS(DT_NODELABEL(nrf_kmu_reserved_push_area)) && !CONFIG_XIP
+#if DT_NODE_EXISTS(DT_NODELABEL(nrf_kmu_reserved_push_area))
 
 #include <zephyr/dt-bindings/memory-attr/memory-attr.h>
 #include <zephyr/linker/devicetree_regions.h>
@@ -85,7 +76,7 @@ enum kmu_metadata_algorithm {
 	METADATA_ALG_ECDSA = 11,
 	METADATA_ALG_ED25519PH = 12,
 	METADATA_ALG_HMAC = 13,
-	METADATA_ALG_RESERVED4 = 14,
+	METADATA_ALG_ECDH = 14,
 	METADATA_ALG_RESERVED5 = 15,
 };
 
@@ -159,7 +150,10 @@ static psa_status_t cracen_kmu_encrypt(const uint8_t *key, size_t key_length,
 	psa_set_key_usage_flags(&attr, PSA_KEY_USAGE_ENCRYPT);
 
 	if (encrypted_buffer_size > CRACEN_KMU_SLOT_KEY_SIZE) {
-		psa_status = psa_generate_random(encrypted_buffer, CRACEN_KMU_SLOT_KEY_SIZE);
+		psa_status = cracen_get_random(NULL, encrypted_buffer, CRACEN_KMU_SLOT_KEY_SIZE);
+		if (psa_status != PSA_SUCCESS) {
+			return psa_status;
+		}
 	} else {
 		return PSA_ERROR_GENERIC_ERROR;
 	}
@@ -378,6 +372,13 @@ static bool can_sign(const psa_key_attributes_t *key_attr)
 }
 #endif /* defined(CONFIG_PSA_WANT_ALG_PURE_EDDSA) || define(CONFIG_PSA_WANT_ALG_ED25519PH) */
 
+#if defined(CONFIG_PSA_WANT_ALG_ECDH)
+static bool can_derive(const psa_key_attributes_t *key_attr)
+{
+	return psa_get_key_usage_flags(key_attr) & PSA_KEY_USAGE_DERIVE;
+}
+#endif
+
 /**
  * @brief Check provisioning state, and delete slots that were not completely provisioned.
  *
@@ -513,6 +514,27 @@ psa_status_t cracen_kmu_destroy_key(const psa_key_attributes_t *attributes)
 		if (psa_status != PSA_SUCCESS) {
 			return psa_status;
 		}
+
+		/* If the slot we attempt to destroy is blocked we will get a hardware failure, and
+		 * there is no way in hardware to distingush between an actual failure and the slot
+		 * being blocked. Therefore we attempt to push the key here to verify if the key is
+		 * blocked or not.
+		 */
+		for (size_t i = 0; i < slot_count; i++) {
+			if (lib_kmu_push_slot(slot_id + i) != 0) {
+				return PSA_ERROR_NOT_PERMITTED;
+			}
+		}
+
+		/* Clean the key data from the push area and protected ram to ensure it's not
+		 * exposed. We use the protected scheme since the key type is not known at
+		 * this point and that clears both.
+		 */
+		kmu_opaque_key_buffer temp_key_buffer = {
+			.key_usage_scheme = CRACEN_KMU_KEY_USAGE_SCHEME_PROTECTED,
+			.number_of_slots = slot_count,
+			.slot_id = slot_id};
+		cracen_kmu_clean_key((const uint8_t *)&temp_key_buffer);
 
 		psa_status = set_provisioning_in_progress(slot_id, slot_count);
 		if (psa_status != PSA_SUCCESS) {
@@ -664,6 +686,12 @@ static psa_status_t convert_to_psa_attributes(kmu_metadata *metadata,
 	case METADATA_ALG_HMAC:
 		psa_set_key_type(key_attr, PSA_KEY_TYPE_HMAC);
 		psa_set_key_algorithm(key_attr, PSA_ALG_HMAC(PSA_ALG_SHA_256));
+		break;
+#endif
+#ifdef CONFIG_PSA_WANT_ALG_ECDH
+	case METADATA_ALG_ECDH:
+		psa_set_key_type(key_attr, PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_SECP_R1));
+		psa_set_key_algorithm(key_attr, PSA_ALG_ECDH);
 		break;
 #endif
 	default:
@@ -864,6 +892,15 @@ static psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_
 			return PSA_ERROR_NOT_SUPPORTED;
 		}
 		metadata->algorithm = METADATA_ALG_HMAC;
+		break;
+#endif
+#ifdef CONFIG_PSA_WANT_ALG_ECDH
+	case PSA_ALG_ECDH:
+		if (!can_derive(key_attr) || PSA_KEY_TYPE_ECC_GET_FAMILY(psa_get_key_type(
+						     key_attr)) != PSA_ECC_FAMILY_SECP_R1) {
+			return PSA_ERROR_NOT_SUPPORTED;
+		}
+		metadata->algorithm = METADATA_ALG_ECDH;
 		break;
 #endif
 	default:
