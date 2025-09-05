@@ -22,6 +22,9 @@ function(dfu_app_zip_package)
   set(CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION)
   set(exclude_files)
   set(include_files)
+  
+  # Include DFU hooks system
+  include(${ZEPHYR_NRF_MODULE_DIR}/cmake/dfu_hooks.cmake)
 
   sysbuild_get(CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION IMAGE ${DEFAULT_IMAGE} VAR CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION KCONFIG)
   sysbuild_get(CONFIG_KERNEL_BIN_NAME IMAGE ${DEFAULT_IMAGE} VAR CONFIG_KERNEL_BIN_NAME KCONFIG)
@@ -263,10 +266,16 @@ function(dfu_app_zip_package)
   if(bin_files)
     sysbuild_get(mcuboot_fw_info_firmware_version IMAGE mcuboot VAR CONFIG_FW_INFO_FIRMWARE_VERSION KCONFIG)
 
+    # Set default output path
+    set(dfu_zip_output "${CMAKE_BINARY_DIR}/dfu_application.zip")
+    
+    # Execute pre-execute hooks - applications can modify parameters here
+    dfu_execute_pre_zip_hooks(bin_files zip_names signed_targets generate_script_app_params dfu_zip_output exclude_files include_files)
+
     include(${ZEPHYR_NRF_MODULE_DIR}/cmake/fw_zip.cmake)
 
     generate_dfu_zip(
-      OUTPUT ${CMAKE_BINARY_DIR}/dfu_application.zip
+      OUTPUT ${dfu_zip_output}
       BIN_FILES ${bin_files}
       ZIP_NAMES ${zip_names}
       TYPE application

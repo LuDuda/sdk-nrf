@@ -7,6 +7,7 @@
 if(SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_BUILD)
   include(${ZEPHYR_BASE}/../nrf/cmake/fw_zip.cmake)
   include(${ZEPHYR_BASE}/../nrf/cmake/dfu_multi_image.cmake)
+  include(${ZEPHYR_BASE}/../nrf/cmake/dfu_hooks.cmake)
 
   set(dfu_multi_image_ids)
   set(dfu_multi_image_paths)
@@ -57,10 +58,17 @@ if(SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_BUILD)
   endif()
 
   if(DEFINED dfu_multi_image_targets)
+    # Set default output path
+    set(dfu_multi_image_output "${CMAKE_BINARY_DIR}/dfu_multi_image.bin")
+    
+    # Execute pre-execute hooks - applications can modify parameters here
+    dfu_execute_pre_multi_image_hooks(dfu_multi_image_ids dfu_multi_image_paths dfu_multi_image_targets dfu_multi_image_output)
+    
+    # Create the multi-image package with potentially modified parameters
     dfu_multi_image_package(dfu_multi_image_pkg
       IMAGE_IDS ${dfu_multi_image_ids}
       IMAGE_PATHS ${dfu_multi_image_paths}
-      OUTPUT ${CMAKE_BINARY_DIR}/dfu_multi_image.bin
+      OUTPUT ${dfu_multi_image_output}
       DEPENDS ${dfu_multi_image_targets}
       )
   else()
