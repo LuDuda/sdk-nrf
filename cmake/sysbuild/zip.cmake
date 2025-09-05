@@ -22,6 +22,9 @@ function(dfu_app_zip_package)
   set(CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION)
   set(exclude_files)
   set(include_files)
+  
+  # Include custom DFU system
+  include(${ZEPHYR_NRF_MODULE_DIR}/cmake/dfu_custom.cmake)
 
   sysbuild_get(CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION IMAGE ${DEFAULT_IMAGE} VAR CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION KCONFIG)
   sysbuild_get(CONFIG_KERNEL_BIN_NAME IMAGE ${DEFAULT_IMAGE} VAR CONFIG_KERNEL_BIN_NAME KCONFIG)
@@ -258,6 +261,37 @@ function(dfu_app_zip_package)
     list(APPEND bin_files "${CMAKE_BINARY_DIR}/nrf70.signed.bin")
     list(APPEND zip_names "nrf70.bin")
     list(APPEND signed_targets nrf70_wifi_fw_patch_target)
+  endif()
+
+  # Hook: Add custom images registered by applications
+  dfu_get_custom_images(custom_ids custom_paths custom_targets custom_zip_names custom_metadata)
+  if(custom_ids)
+    list(APPEND bin_files ${custom_paths})
+    list(APPEND zip_names ${custom_zip_names})
+    list(APPEND signed_targets ${custom_targets})
+    
+    # Process custom metadata for script parameters
+    list(LENGTH custom_ids custom_count)
+    math(EXPR custom_max_idx "${custom_count} - 1")
+    foreach(idx RANGE ${custom_max_idx})
+      list(GET custom_zip_names ${idx} custom_zip_name)
+      list(GET custom_metadata ${idx} custom_meta)
+      
+      if(custom_meta)
+        # Parse metadata and add to script params
+        string(REPLACE ";" "\n" meta_lines "${custom_meta}")
+        string(REPLACE "\n" ";" meta_list "${meta_lines}")
+        foreach(meta_item ${meta_list})
+          if(meta_item MATCHES "^([^=]+)=(.*)$")
+            set(key "${CMAKE_MATCH_1}")
+            set(value "${CMAKE_MATCH_2}")
+            list(APPEND generate_script_app_params "${custom_zip_name}${key}=${value}")
+          endif()
+        endforeach()
+      endif()
+    endforeach()
+    
+    message(STATUS "Added ${custom_count} custom images to DFU ZIP package")
   endif()
 
   if(bin_files)
