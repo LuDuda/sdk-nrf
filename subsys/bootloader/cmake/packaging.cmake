@@ -7,6 +7,7 @@
 if(SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_BUILD)
   include(${ZEPHYR_BASE}/../nrf/cmake/fw_zip.cmake)
   include(${ZEPHYR_BASE}/../nrf/cmake/dfu_multi_image.cmake)
+  include(${ZEPHYR_BASE}/../nrf/cmake/dfu_extra.cmake)
 
   set(dfu_multi_image_ids)
   set(dfu_multi_image_paths)
@@ -48,6 +49,18 @@ if(SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_BUILD)
 
     list(APPEND dfu_multi_image_paths "${CMAKE_BINARY_DIR}/nrf70.signed.bin")
     list(APPEND dfu_multi_image_targets nrf70_wifi_fw_patch_target)
+  endif()
+
+  # Include extra binaries if enabled
+  if(SB_CONFIG_DFU_EXTRA_BINARIES AND SB_CONFIG_DFU_EXTRA_MULTI_IMAGE)
+    dfu_multi_image_get_extra(extra_ids extra_paths extra_targets)
+    if(extra_ids)
+      list(LENGTH extra_ids extra_count)
+      list(APPEND dfu_multi_image_ids ${extra_ids})
+      list(APPEND dfu_multi_image_paths ${extra_paths})
+      list(APPEND dfu_multi_image_targets ${extra_targets})
+      message(STATUS "DFU Multi-Image: Added ${extra_count} extra images to package")
+    endif()
   endif()
 
   if(DEFINED dfu_multi_image_targets)
