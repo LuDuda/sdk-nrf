@@ -33,12 +33,15 @@ The following options control which images are included:
 +----------------------------------------------------+-----------------------------------------+
 |``SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_NET``           | Include network core image update.      |
 +----------------------------------------------------+-----------------------------------------+
-| ``SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_MCUBOOT``      | Include MCUboot update.                 |
+|``SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_MCUBOOT``       | Include MCUboot update.                 |
 +----------------------------------------------------+-----------------------------------------+
 |``SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH`` | Include nRF700x Wi-Fi® firmware patches.|
 +----------------------------------------------------+-----------------------------------------+
 |``SB_CONFIG_SUIT_MULTI_IMAGE_PACKAGE_BUILD``        | Include SUIT envelope and cache images. |
 +----------------------------------------------------+-----------------------------------------+
+
+In addition to the built-in set of images, you can also reguster the **extra images** that will be included in the multi-image DFU package.
+See :ref:`dfu_extra <dfu_extra>` for details on how to configure and assign IDs for extra DFU images.
 
 .. _lib_dfu_multi_image_suit_multi_image_package:
 
