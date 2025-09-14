@@ -210,6 +210,30 @@ function(dfu_app_zip_package)
     list(APPEND signed_targets nrf70_wifi_fw_patch_target)
   endif()
 
+  if(SB_CONFIG_DFU_ZIP_CUSTOM_IMAGE)
+    # Custom image
+    mcuboot_image_number_to_slot(custom_slot_primary ${SB_CONFIG_MCUBOOT_CUSTOM_IMAGE_NUMBER} n)
+    mcuboot_image_number_to_slot(custom_slot_secondary ${SB_CONFIG_MCUBOOT_CUSTOM_IMAGE_NUMBER} y)
+    math(EXPR custom_slot_primary "${custom_slot_primary} + 1")
+    math(EXPR custom_slot_secondary "${custom_slot_secondary} + 1")
+
+    list(APPEND generate_script_app_params
+         "${SB_CONFIG_MCUBOOT_CUSTOM_IMAGE_ZIP_NAME}image_index=${SB_CONFIG_MCUBOOT_CUSTOM_IMAGE_NUMBER}"
+         "${SB_CONFIG_MCUBOOT_CUSTOM_IMAGE_ZIP_NAME}slot_index_primary=${custom_slot_primary}"
+         "${SB_CONFIG_MCUBOOT_CUSTOM_IMAGE_ZIP_NAME}slot_index_secondary=${custom_slot_secondary}"
+    )
+
+    # Make path absolute if relative
+    set(custom_image_path "${SB_CONFIG_MCUBOOT_CUSTOM_IMAGE_BINARY_PATH}")
+    if(NOT IS_ABSOLUTE "${custom_image_path}")
+      set(custom_image_path "${CMAKE_BINARY_DIR}/${custom_image_path}")
+    endif()
+
+    list(APPEND bin_files "${custom_image_path}")
+    list(APPEND zip_names "${SB_CONFIG_MCUBOOT_CUSTOM_IMAGE_ZIP_NAME}")
+    list(APPEND signed_targets custom_image_target)
+  endif()
+
   if(bin_files)
     sysbuild_get(mcuboot_fw_info_firmware_version IMAGE mcuboot VAR CONFIG_FW_INFO_FIRMWARE_VERSION KCONFIG)
 

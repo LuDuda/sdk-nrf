@@ -37,6 +37,8 @@ The following options control which images are included:
 +----------------------------------------------------+-----------------------------------------+
 |``SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH`` | Include nRF700x Wi-Fi® firmware patches.|
 +----------------------------------------------------+-----------------------------------------+
+|``SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_CUSTOM_IMAGE``  | Include custom image update.            |
++----------------------------------------------------+-----------------------------------------+
 |``SB_CONFIG_SUIT_MULTI_IMAGE_PACKAGE_BUILD``        | Include SUIT envelope and cache images. |
 +----------------------------------------------------+-----------------------------------------+
 

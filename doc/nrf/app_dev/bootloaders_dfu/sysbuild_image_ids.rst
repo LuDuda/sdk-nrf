@@ -26,6 +26,8 @@ A value of ``-1`` indicates that the image is not present:
 +-------------------------------------------------+------------------------------------------------------------+----------------------------------------------+--------------------------------------------------------------------------------------------------------------+
 | ``SB_CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER``     | :kconfig:option:`CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER`     | Image number for QSPI XIP split image update | nRF52840 or nRF5340 device and ``SB_CONFIG_QSPI_XIP_SPLIT_IMAGE``                                            |
 +-------------------------------------------------+------------------------------------------------------------+----------------------------------------------+--------------------------------------------------------------------------------------------------------------+
+| ``SB_CONFIG_MCUBOOT_CUSTOM_IMAGE_NUMBER``       | :kconfig:option:`CONFIG_MCUBOOT_CUSTOM_IMAGE_NUMBER`       | Image number for custom image update         | ``SB_CONFIG_MCUBOOT_CUSTOM_IMAGE_SUPPORT``                                                                   |
++-------------------------------------------------+------------------------------------------------------------+----------------------------------------------+--------------------------------------------------------------------------------------------------------------+
 | ``SB_CONFIG_MCUBOOT_MCUBOOT_IMAGE_NUMBER``      | :kconfig:option:`CONFIG_MCUBOOT_MCUBOOT_IMAGE_NUMBER`      | Image number for MCUboot update              | ``SB_CONFIG_SECURE_BOOT_APPCORE``                                                                            |
 |                                                 | (only set for MCUboot image)                               |                                              |                                                                                                              |
 +-------------------------------------------------+------------------------------------------------------------+----------------------------------------------+--------------------------------------------------------------------------------------------------------------+
@@ -91,7 +93,9 @@ Image numbers are assigned in ascending order based on the following priority:
 +----------------------+--------------------------------+-------------------------------------------------+------------------------------------------------------------+
 | QSPI XIP split image | 3                              | ``SB_CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER``     | :kconfig:option:`CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER`     |
 +----------------------+--------------------------------+-------------------------------------------------+------------------------------------------------------------+
-| MCUboot              | 4 (only set for MCUboot image) | ``SB_CONFIG_MCUBOOT_MCUBOOT_IMAGE_NUMBER``      | :kconfig:option:`CONFIG_MCUBOOT_MCUBOOT_IMAGE_NUMBER`      |
+| Custom image         | 4                              | ``SB_CONFIG_MCUBOOT_CUSTOM_IMAGE_NUMBER``       | :kconfig:option:`CONFIG_MCUBOOT_CUSTOM_IMAGE_NUMBER`       |
++----------------------+--------------------------------+-------------------------------------------------+------------------------------------------------------------+
+| MCUboot              | 5 (only set for MCUboot image) | ``SB_CONFIG_MCUBOOT_MCUBOOT_IMAGE_NUMBER``      | :kconfig:option:`CONFIG_MCUBOOT_MCUBOOT_IMAGE_NUMBER`      |
 +----------------------+--------------------------------+-------------------------------------------------+------------------------------------------------------------+
 
 MCUboot update package version
@@ -107,3 +111,26 @@ If the version in the update is lower than the current version, MCUboot will rej
 Additionally, make sure to load the correct update image onto the device.
 If MCUboot is currently running from the ``s0`` slot, then you must use the ``s1`` update, and if it is running from the ``s1`` slot, then you must use the ``s0`` update.
 If you upload to the wrong slot image, MCUboot will reject the update.
+
+Custom image
+*************
+
+Custom image allows applications to include a user-defined firmware or data image in DFU packages alongside standard system images.
+When ``SB_CONFIG_MCUBOOT_CUSTOM_IMAGE_SUPPORT`` is enabled, the build system automatically:
+
+* Assigns the next available image number based on enabled system images
+* Includes the custom image in both multi-image binaries and ZIP packages
+* Handles MCUboot slot calculations and partition management
+
+To use custom image:
+
+1. Enable ``SB_CONFIG_MCUBOOT_CUSTOM_IMAGE_SUPPORT=y`` in your sysbuild configuration
+2. Configure the custom image properties:
+
+   * ``SB_CONFIG_MCUBOOT_CUSTOM_IMAGE_BINARY_PATH`` - Path to your binary file
+   * ``SB_CONFIG_MCUBOOT_CUSTOM_IMAGE_SIZE`` - Size of the image partition
+   * ``SB_CONFIG_MCUBOOT_CUSTOM_IMAGE_ZIP_NAME`` - Name in ZIP packages
+
+3. Ensure proper partition manager configuration with ``mcuboot_primary_N`` and ``mcuboot_secondary_N`` partitions where N is the assigned image number
+
+The custom image will be automatically included in DFU packages when ``SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_CUSTOM_IMAGE`` or ``SB_CONFIG_DFU_ZIP_CUSTOM_IMAGE`` are enabled.

@@ -50,6 +50,20 @@ if(SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_BUILD)
     list(APPEND dfu_multi_image_targets nrf70_wifi_fw_patch_target)
   endif()
 
+  if(SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_CUSTOM_IMAGE)
+    # Use the assigned custom image number directly
+    list(APPEND dfu_multi_image_ids ${SB_CONFIG_MCUBOOT_CUSTOM_IMAGE_NUMBER})
+
+    # Make path absolute if relative
+    set(custom_image_path "${SB_CONFIG_MCUBOOT_CUSTOM_IMAGE_BINARY_PATH}")
+    if(NOT IS_ABSOLUTE "${custom_image_path}")
+      set(custom_image_path "${CMAKE_BINARY_DIR}/${custom_image_path}")
+    endif()
+
+    list(APPEND dfu_multi_image_paths "${custom_image_path}")
+    list(APPEND dfu_multi_image_targets custom_image_target)
+  endif()
+
   if(DEFINED dfu_multi_image_targets)
     dfu_multi_image_package(dfu_multi_image_pkg
       IMAGE_IDS ${dfu_multi_image_ids}

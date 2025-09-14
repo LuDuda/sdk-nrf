@@ -48,8 +48,15 @@ config DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH
 	  MCUBoot. The signed image will then be merged with the application image and flashed onto
 	  the target board.
 
-	  Ensure that the required MCUBoot partitions are properly configured before enabling this
-	  option. Refer to the documentation for detailed instructions on partition configuration
-	  and the DFU process.
+config DFU_MULTI_IMAGE_PACKAGE_CUSTOM_IMAGE
+	bool "Custom image update"
+	depends on MCUBOOT_CUSTOM_IMAGE_SUPPORT
+	help
+	  Enable custom image support in multi-image DFU packages.
+	  
+	  This allows including user-defined custom images in DFU packages
+	  alongside standard system images. The custom image will be automatically
+	  assigned the next available image number and included in multi-image
+	  DFU binaries.
 
 endif # DFU_MULTI_IMAGE_PACKAGE_BUILD
