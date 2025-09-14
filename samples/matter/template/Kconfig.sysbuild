@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2023 Nordic Semiconductor ASA
+# Copyright (c) 2024 Nordic Semiconductor
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
@@ -42,7 +42,8 @@ config PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
 if SOC_SERIES_NRF53X
 
 config MCUBOOT_UPDATEABLE_IMAGES
-	default 2
+	default 3 if DFU_EXTRA_BINARIES  # app + net + ext_img when extra binaries enabled
+	default 2                        # app + net normally
 
 choice MCUBOOT_MODE
 	default MCUBOOT_MODE_OVERWRITE_ONLY
@@ -62,6 +63,15 @@ config DFU_MULTI_IMAGE_PACKAGE_NET
 	default y
 
 endif # SOC_SERIES_NRF53X
+
+#### DFU configuration for nRF54L15 (no network core)
+if SOC_SERIES_NRF54LX
+
+config MCUBOOT_UPDATEABLE_IMAGES
+	default 2 if DFU_EXTRA_BINARIES  # app + ext_img when extra binaries enabled
+	default 1                        # app only normally
+
+endif # SOC_SERIES_NRF54LX
 
 if (BOARD_NRF54L15DK || BOARD_NRF54LM20DK)
 
