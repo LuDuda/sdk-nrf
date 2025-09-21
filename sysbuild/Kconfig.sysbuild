@@ -43,6 +43,15 @@ config PM_OVERRIDE_EXTERNAL_DRIVER_CHECK
 
 endif # PARTITION_MANAGER
 
+config EXTERNAL_FLASH_MAPPED_ADDR
+	hex "Mapped address of external flash memory"
+	default 0x12000000 if SOC_SERIES_NRF52X
+	default 0x10000000 if SOC_FAMILY_NORDIC_NRF
+	help
+	  Defines the logical address used by flashing tools and image merging
+	  utilities (for example, nrfutil, nrfjprog, or mergehex) to place data
+	  into external flash memory.
+
 config BUILD_OUTPUT_BIN
 	bool "Build a binary in BIN format"
 	default y
