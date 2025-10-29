@@ -27,9 +27,9 @@ A value of ``-1`` indicates that the image is not present:
 +-------------------------------------------+------------------------------------------------------------+----------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------+
 | ``NCS_MCUBOOT_MCUBOOT_IMAGE_NUMBER``      | :kconfig:option:`CONFIG_MCUBOOT_MCUBOOT_IMAGE_NUMBER`      | Image number for MCUboot update              | :kconfig:option:`SB_CONFIG_SECURE_BOOT_APPCORE`                                                                                          |
 +-------------------------------------------+------------------------------------------------------------+----------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------+
-| ``NCS_MCUBOOT_EXTRA_1_IMAGE_NUMBER``      | :kconfig:option:`CONFIG_MCUBOOT_EXTRA_1_IMAGE_NUMBER`      | Image number for extra image #1              | :kconfig:option:`SB_CONFIG_MCUBOOT_EXTRA_IMAGES`                                                                                     |
+| ``NCS_MCUBOOT_EXTRA_1_IMAGE_NUMBER``      | :kconfig:option:`CONFIG_MCUBOOT_EXTRA_1_IMAGE_NUMBER`      | Image number for extra image 1               | :kconfig:option:`SB_CONFIG_MCUBOOT_EXTRA_IMAGES`                                                                                     |
 +-------------------------------------------+------------------------------------------------------------+----------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------+
-| ``NCS_MCUBOOT_EXTRA_2_IMAGE_NUMBER``      | :kconfig:option:`CONFIG_MCUBOOT_EXTRA_2_IMAGE_NUMBER`      | Image number for extra image #2              | :kconfig:option:`SB_CONFIG_MCUBOOT_EXTRA_IMAGES`                                                                                     |
+| ``NCS_MCUBOOT_EXTRA_2_IMAGE_NUMBER``      | :kconfig:option:`CONFIG_MCUBOOT_EXTRA_2_IMAGE_NUMBER`      | Image number for extra image 2               | :kconfig:option:`SB_CONFIG_MCUBOOT_EXTRA_IMAGES`                                                                                     |
 +-------------------------------------------+------------------------------------------------------------+----------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------+
 
 The following configuration options specify the number of images and how these image numbers are configured:
@@ -97,9 +97,9 @@ Image numbers are assigned in ascending order based on the following priority:
 +----------------------+------------------------+----------------------------------------------+------------------------------------------------------------+
 | MCUboot              | 4                      | ``NCS_MCUBOOT_MCUBOOT_IMAGE_NUMBER``         | :kconfig:option:`CONFIG_MCUBOOT_MCUBOOT_IMAGE_NUMBER`      |
 +----------------------+------------------------+----------------------------------------------+------------------------------------------------------------+
-| Extra image #1       | 5                      | ``NCS_MCUBOOT_EXTRA_1_IMAGE_NUMBER``         | :kconfig:option:`CONFIG_MCUBOOT_EXTRA_1_IMAGE_NUMBER`      |
+| Extra image 1        | 5                      | ``NCS_MCUBOOT_EXTRA_1_IMAGE_NUMBER``         | :kconfig:option:`CONFIG_MCUBOOT_EXTRA_1_IMAGE_NUMBER`      |
 +----------------------+------------------------+----------------------------------------------+------------------------------------------------------------+
-| Extra image #2       | 6                      | ``NCS_MCUBOOT_EXTRA_2_IMAGE_NUMBER``         | :kconfig:option:`CONFIG_MCUBOOT_EXTRA_2_IMAGE_NUMBER`      |
+| Extra image 2        | 6                      | ``NCS_MCUBOOT_EXTRA_2_IMAGE_NUMBER``         | :kconfig:option:`CONFIG_MCUBOOT_EXTRA_2_IMAGE_NUMBER`      |
 +----------------------+------------------------+----------------------------------------------+------------------------------------------------------------+
 
 

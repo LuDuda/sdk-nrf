@@ -19,14 +19,17 @@
 # Usage:
 #   dfu_extra_add_binary(
 #     BINARY_PATH <path>
-#     [IMAGE_NAME <name>]
+#     [NAME <name>]
+#     [VERSION <version>]
 #     [PACKAGE_TYPE <zip|multi|all>]
 #     [DEPENDS <target1> [<target2> ...]]
 #   )
 #
 # Parameters:
 #   BINARY_PATH  - Path to the binary file to include in the package.
-#   IMAGE_NAME   - Optional name for the binary in packages (defaults to basename of BINARY_PATH)
+#   NAME         - Optional name for the binary (used in packages and as partition name).
+#                  Defaults to basename of BINARY_PATH.
+#   VERSION      - Optional image version string (for signing).
 #   PACKAGE_TYPE - Optional package type selection: "zip", "multi", or "all" (default: "all")
 #                  Controls which package types include this binary.
 #   DEPENDS      - Optional list of CMake targets that must be built before
@@ -36,7 +39,7 @@
 #   Image IDs are automatically assigned when dfu_extra_get_binaries() is called.
 #
 function(dfu_extra_add_binary)
-  cmake_parse_arguments(EXTRA "" "BINARY_PATH;IMAGE_NAME;PACKAGE_TYPE" "DEPENDS" ${ARGN})
+  cmake_parse_arguments(EXTRA "" "BINARY_PATH;NAME;VERSION;PACKAGE_TYPE" "DEPENDS" ${ARGN})
 
   # Validate required parameters
   if(NOT DEFINED EXTRA_BINARY_PATH)
@@ -44,12 +47,17 @@ function(dfu_extra_add_binary)
   endif()
 
   # Set defaults for optional parameters
-  if(NOT DEFINED EXTRA_IMAGE_NAME)
-    get_filename_component(EXTRA_IMAGE_NAME ${EXTRA_BINARY_PATH} NAME)
+  if(NOT DEFINED EXTRA_NAME)
+    get_filename_component(EXTRA_NAME ${EXTRA_BINARY_PATH} NAME)
   endif()
 
   if(NOT DEFINED EXTRA_PACKAGE_TYPE)
     set(EXTRA_PACKAGE_TYPE "all")
+  endif()
+
+  # Handle version
+  if(NOT DEFINED EXTRA_VERSION)
+    set(EXTRA_VERSION "0.0.0+0")
   endif()
 
   # Validate PACKAGE_TYPE parameter
@@ -61,23 +69,26 @@ function(dfu_extra_add_binary)
   if(EXTRA_DEPENDS)
     set(target_list "${EXTRA_DEPENDS}")
   else()
-    set(target_list "")
+    set(target_list "${EXTRA_BINARY_PATH}")
   endif()
 
   get_property(all_paths GLOBAL PROPERTY DFU_EXTRA_PATHS)
   get_property(all_names GLOBAL PROPERTY DFU_EXTRA_NAMES)
-  get_property(all_targets GLOBAL PROPERTY DFU_EXTRA_TARGETS)
+  get_property(all_versions GLOBAL PROPERTY DFU_EXTRA_VERSIONS)
   get_property(all_package_types GLOBAL PROPERTY DFU_EXTRA_PACKAGE_TYPES)
+  get_property(all_targets GLOBAL PROPERTY DFU_EXTRA_TARGETS)
 
   list(APPEND all_paths "${EXTRA_BINARY_PATH}")
-  list(APPEND all_names "${EXTRA_IMAGE_NAME}")
-  list(APPEND all_targets "${target_list}")
+  list(APPEND all_names "${EXTRA_NAME}")
+  list(APPEND all_versions "${EXTRA_VERSION}")
   list(APPEND all_package_types "${EXTRA_PACKAGE_TYPE}")
+  list(APPEND all_targets "${target_list}")
 
   set_property(GLOBAL PROPERTY DFU_EXTRA_PATHS "${all_paths}")
   set_property(GLOBAL PROPERTY DFU_EXTRA_NAMES "${all_names}")
-  set_property(GLOBAL PROPERTY DFU_EXTRA_TARGETS "${all_targets}")
   set_property(GLOBAL PROPERTY DFU_EXTRA_PACKAGE_TYPES "${all_package_types}")
+  set_property(GLOBAL PROPERTY DFU_EXTRA_VERSIONS "${all_versions}")
+  set_property(GLOBAL PROPERTY DFU_EXTRA_TARGETS "${all_targets}")
 endfunction()
 
 #
@@ -104,10 +115,10 @@ function(dfu_extra_get_binaries)
 
   get_property(all_paths GLOBAL PROPERTY DFU_EXTRA_PATHS)
   get_property(all_names GLOBAL PROPERTY DFU_EXTRA_NAMES)
-  get_property(all_targets GLOBAL PROPERTY DFU_EXTRA_TARGETS)
   get_property(all_package_types GLOBAL PROPERTY DFU_EXTRA_PACKAGE_TYPES)
+  get_property(all_targets GLOBAL PROPERTY DFU_EXTRA_TARGETS)
 
-  foreach(var IN ITEMS all_paths all_names all_targets all_package_types)
+  foreach(var IN ITEMS all_paths all_names all_package_types all_targets)
     if(NOT ${var})
       set(${var} "")
     endif()
@@ -116,19 +127,20 @@ function(dfu_extra_get_binaries)
   set(all_image_ids "")
   list(LENGTH all_paths num_binaries)
   if(num_binaries GREATER 0)
-    if(NOT DEFINED NCS_MCUBOOT_EXTRA_1_IMAGE_NUMBER OR NCS_MCUBOOT_EXTRA_1_IMAGE_NUMBER EQUAL -1)
-      message(FATAL_ERROR "Extra images not configured. Set SB_CONFIG_MCUBOOT_EXTRA_IMAGES to at least ${num_binaries} in sysbuild.")
-    endif()
-
-    set(base_id ${NCS_MCUBOOT_EXTRA_1_IMAGE_NUMBER})
-
     math(EXPR last_index "${num_binaries} - 1")
     foreach(index RANGE ${last_index})
-      math(EXPR current_id "${base_id} + ${index}")
       list(GET all_paths ${index} current_path)
 
+      # Calculate slot number (starts from 1)
+      math(EXPR slot_number "${index} + 1")
+
+      # Check if the specific slot is configured
+      if(NOT DEFINED NCS_MCUBOOT_EXTRA_${slot_number}_IMAGE_NUMBER OR NCS_MCUBOOT_EXTRA_${slot_number}_IMAGE_NUMBER EQUAL -1)
+        message(WARNING "Extra image slot ${slot_number} not configured. Set SB_CONFIG_MCUBOOT_EXTRA_IMAGES to at least ${num_binaries} in sysbuild.")
+      endif()
+
+      set(current_id ${NCS_MCUBOOT_EXTRA_${slot_number}_IMAGE_NUMBER})
       list(APPEND all_image_ids ${current_id})
-      message(STATUS "DFU Extra: Assigning image ID ${current_id} to binary: ${current_path}")
     endforeach()
   endif()
 

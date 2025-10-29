@@ -8,7 +8,7 @@ DFU extra image extensions
    :depth: 2
 
 The DFU extra image module provides a flexible mechanism for including extra firmware images in the DFU packages.
-This flexibility enables applications to support firmware updates of additional images extending beyond the native capabilities of the |NCS|, for example for external devices.
+This flexibility enables applications to support firmware updates of additional images extending beyond the native capabilities of the |NCS|, for example, for external devices.
 
 This CMake extension supports the following DFU delivery mechanisms:
 
@@ -41,23 +41,23 @@ Add extra binaries in your application's :file:`sysbuild.cmake`` file:
       # Include the extra DFU system
       include(${ZEPHYR_NRF_MODULE_DIR}/cmake/dfu_extra.cmake)
 
-      # Define path to external firmware
-      set(ext_fw "${APP_DIR}/ext_fw.signed.bin")
+      # Define path to extra image
+      set(ext_fw "${APP_DIR}/ext_fw.bin")
 
-      # Create build target for the external binary
-      add_custom_target(ext_fw_target
-         DEPENDS ${ext_fw}
-         COMMENT "External firmware dependency"
-      )
+      # Create build target for the extra binary
+      add_custom_target(ext_fw_target DEPENDS ${ext_fw})
 
       # Add extra binary to DFU packages
       dfu_extra_add_binary(
           BINARY_PATH ${ext_fw}
+          NAME "ext_fw"
           DEPENDS ext_fw_target
        )
    endif()
 
 If an additional binary needs to be handled by MCUboot as updatable slots, adjust the :kconfig:option:`SB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES` Kconfig option, and make sure MCUboot partitions are defined correctly.
+
+To automatically include the extra binary in the final :file:`merged.hex` output, define a partition with the same name as provided in the ``NAME`` parameter within your partition manager configuration
 
 API documentation
 *****************
@@ -75,7 +75,8 @@ Refer to the syntax of the binary:
 
    dfu_extra_add_binary(
      BINARY_PATH <path>
-     [IMAGE_NAME <name>]
+     [NAME <name>]
+     [VERSION <version>]
      [PACKAGE_TYPE <type>]
      [DEPENDS <target1> [<target2> ...]]
    )
@@ -84,8 +85,9 @@ You can adjust the following parameters:
 
 * ``BINARY_PATH`` - Path to the binary file that will be included in the package.
   The path can be absolute or relative to the build directory.
-* ``IMAGE_NAME``  - Optional name for the binary file in packages.
+* ``NAME``  - Optional name for the binary file in packages.
   If not provided, it defaults to the basename of ``BINARY_PATH``.
+* ``VERSION`` - Optional image version string (for signing).
 * ``PACKAGE_TYPE`` - Optional package type selection: ``"zip"``, ``"multi"``, or ``"all"`` (default).
   Controls which package types include this binary:
      * ``"zip"`` - Include only in ZIP packages
