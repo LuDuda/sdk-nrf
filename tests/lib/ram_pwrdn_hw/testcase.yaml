@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+tests:
+  libraries.ram_pwrdn.hw:
+    harness: console
+    harness_config:
+      type: multi_line
+      ordered: true
+      regex:
+        - "ram_pwrdn: initial boot"
+        - "ram_pwrdn: powered down unused RAM"
+        - "ram_pwrdn: RAM access after power-down OK"
+        - "ram_pwrdn: powered up unused RAM"
+        - "ram_pwrdn: RAM access after power-up OK"
+        - "ram_pwrdn: rebooting with RAM powered down"
+        - "ram_pwrdn: boot after reboot"
+        - "ram_pwrdn: RAM access after reboot OK"
+        - "ram_pwrdn: TEST PASS"
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    tags:
+      - ram_pwrdn
